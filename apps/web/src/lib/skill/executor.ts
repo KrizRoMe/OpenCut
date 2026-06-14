@@ -340,8 +340,26 @@ export async function executeSkillAction({
 					newStartTime: atTicks,
 				});
 
+				// Report the resulting layout so the result is observable/debuggable.
+				const sceneAfter = editor.scenes.getActiveSceneOrNull();
+				const layout: string[] = [];
+				if (sceneAfter) {
+					const tracksAfter = [
+						sceneAfter.tracks.main,
+						...sceneAfter.tracks.overlay,
+					].filter((t) => t.type === "video");
+					for (const t of tracksAfter) {
+						for (const el of t.elements) {
+							const s = el.startTime / TICKS_PER_SECOND;
+							const e = (el.startTime + el.duration) / TICKS_PER_SECOND;
+							const onBase = t.id === base.trackId ? "✓" : `pista ${t.id.slice(0, 4)}`;
+							layout.push(`${el.name.slice(0, 14)} [${s.toFixed(1)}–${e.toFixed(1)}s] ${onBase}`);
+						}
+					}
+				}
 				return ok(
-					"Segundo video insertado como continuación en la misma pista.",
+					`Insertado como continuación. Resultado: ${layout.join(" | ")}`,
+					{ layout },
 				);
 			}
 
