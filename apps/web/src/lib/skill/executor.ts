@@ -278,6 +278,73 @@ export async function executeSkillAction({
 				return ok(`"${asset.name}" añadido al timeline.`);
 			}
 
+			case "insert_as_continuation": {
+				// Composite: split the base video at N seconds, push its tail right by
+				// the inserted clip's length, and drop the second clip into the gap on
+				// the SAME track (sequential continuation).
+				const scene = editor.scenes.getActiveSceneOrNull();
+				if (!scene) return fail("No hay escena activa.");
+
+				// Collect video elements with their track (raw ticks).
+				const videoTracks = [scene.tracks.main, ...scene.tracks.overlay].filter(
+					(t) => t.type === "video",
+				);
+				const videoEls: Array<{ trackId: string; el: { id: string; startTime: number; duration: number } }> =
+					[];
+				for (const t of videoTracks) {
+					for (const el of t.elements) {
+						videoEls.push({ trackId: t.id, el: el as never });
+					}
+				}
+				if (videoEls.length < 2)
+					return fail("Necesito dos clips de video (base e insertado).");
+
+				const mainTrackId = scene.tracks.main.id;
+				// Base = clip on the main track; insert = the other video clip.
+				const baseId = str(payload.baseClipId);
+				const insertId = str(payload.insertClipId);
+				const base =
+					(baseId && videoEls.find((v) => v.el.id === baseId)) ||
+					videoEls.find((v) => v.trackId === mainTrackId) ||
+					videoEls[0];
+				const insert =
+					(insertId && videoEls.find((v) => v.el.id === insertId)) ||
+					videoEls.find((v) => v.el.id !== base.el.id);
+				if (!insert) return fail("No encontré el segundo video a insertar.");
+
+				const atTicks = toTicks(num(payload.atSeconds ?? payload.splitAt ?? payload.timelineStart, 0));
+				const insertDuration = insert.el.duration;
+
+				// 1) Split the base clip at the cut point (on its own track).
+				const rightParts = editor.timeline.splitElements({
+					elements: [{ trackId: base.trackId, elementId: base.el.id }],
+					splitTime: atTicks,
+				});
+				const right = rightParts[0];
+
+				// 2) Push the base's tail to after the inserted clip.
+				if (right) {
+					editor.timeline.moveElement({
+						sourceTrackId: right.trackId,
+						targetTrackId: base.trackId,
+						elementId: right.elementId,
+						newStartTime: atTicks + insertDuration,
+					});
+				}
+
+				// 3) Drop the second clip into the gap, on the base track.
+				editor.timeline.moveElement({
+					sourceTrackId: insert.trackId,
+					targetTrackId: base.trackId,
+					elementId: insert.el.id,
+					newStartTime: atTicks,
+				});
+
+				return ok(
+					"Segundo video insertado como continuación en la misma pista.",
+				);
+			}
+
 			case "change_speed": {
 				const elementId = str(payload.clipId ?? payload.elementId);
 				if (!elementId) return fail("Falta elementId del clip.");

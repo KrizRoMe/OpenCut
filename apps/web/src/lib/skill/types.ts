@@ -18,6 +18,7 @@ export type SkillActionName =
 	| "separate_audio"
 	| "change_speed"
 	| "add_clip"
+	| "insert_as_continuation"
 	| "add_background_music"
 	| "set_aspect_ratio"
 	| "zoom_timeline"

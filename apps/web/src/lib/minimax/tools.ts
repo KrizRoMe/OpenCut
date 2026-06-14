@@ -9,6 +9,7 @@ Volume is 0.0 (silent) to 2.0 (double), default 1.0.
 Distinguish: "separar/extraer/detach audio" => separate_audio (moves the clip's audio to its own track). "quitar/silenciar/mute audio" => change_volume with volume 0. "subir/bajar volumen" => change_volume.
 TikTok-style editing: "ponlo vertical / formato tiktok / 9:16" => set_aspect_ratio. "pon música de fondo / usa el audio X de fondo" => add_background_music (match the asset by name from the provided assets list, pass its mediaId). "añade el video / clip X" => add_clip. "cámara lenta / acelera / x2 / slow motion" => change_speed (rate < 1 is slower, > 1 is faster).
 The "assets" list in the state shows imported media (audio/video) with mediaId and name — use those mediaIds when the user references a clip or song by name.
+IMPORTANT: requests like "inserta el video 2 en el segundo N y que el video 1 continúe después" / "corta el primero y mete el segundo como continuación en una sola línea" are a SINGLE composite action: use insert_as_continuation (do NOT use split_clip or trim_clip for these). Pass atSeconds = the cut point.
 The user may write in Spanish or English; understand both.`;
 
 export const SKILL_TOOLS: MinimaxTool[] = [
@@ -193,6 +194,32 @@ export const SKILL_TOOLS: MinimaxTool[] = [
 					mediaId: { type: "string", description: "mediaId of an imported asset" },
 					timelineStart: { type: "number" },
 				},
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "insert_as_continuation",
+			description:
+				"Composite edit: cut the base video at N seconds and insert the OTHER video there as a continuation on the SAME track, pushing the rest of the base video after it. Use for requests like 'inserta el segundo video en el segundo 12 y que el primero continúe después', 'corta el video 1 en el segundo 10 y mete el video 2 como continuación'.",
+			parameters: {
+				type: "object",
+				properties: {
+					atSeconds: {
+						type: "number",
+						description: "Where to cut the base video and insert the other (seconds)",
+					},
+					baseClipId: {
+						type: "string",
+						description: "elementId of the base/first video (optional; defaults to the main-track video)",
+					},
+					insertClipId: {
+						type: "string",
+						description: "elementId of the video to insert (optional; defaults to the other video)",
+					},
+				},
+				required: ["atSeconds"],
 			},
 		},
 	},
