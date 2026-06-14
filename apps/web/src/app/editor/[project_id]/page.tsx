@@ -23,6 +23,7 @@ import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
 import { ChangelogNotification } from "@/lib/changelog/components/changelog-notification";
+import { AiChat } from "@/components/ai-chat";
 
 export default function Editor() {
 	const params = useParams();
@@ -40,6 +41,7 @@ export default function Editor() {
 					<Onboarding />
 					<MigrationDialog />
 					<ChangelogNotification />
+					<AiChat />
 				</div>
 			</EditorProvider>
 		</MobileGate>
