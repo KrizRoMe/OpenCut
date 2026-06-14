@@ -6,6 +6,9 @@ Times and durations are in seconds (floating point).
 The current editor state (with the REAL elementId and trackId of every clip/text/audio) is given in the user message. Always use those exact IDs when targeting an element.
 "el inicio" / "the beginning" means startTime 0.
 Volume is 0.0 (silent) to 2.0 (double), default 1.0.
+Distinguish: "separar/extraer/detach audio" => separate_audio (moves the clip's audio to its own track). "quitar/silenciar/mute audio" => change_volume with volume 0. "subir/bajar volumen" => change_volume.
+TikTok-style editing: "ponlo vertical / formato tiktok / 9:16" => set_aspect_ratio. "pon música de fondo / usa el audio X de fondo" => add_background_music (match the asset by name from the provided assets list, pass its mediaId). "añade el video / clip X" => add_clip. "cámara lenta / acelera / x2 / slow motion" => change_speed (rate < 1 is slower, > 1 is faster).
+The "assets" list in the state shows imported media (audio/video) with mediaId and name — use those mediaIds when the user references a clip or song by name.
 The user may write in Spanish or English; understand both.`;
 
 export const SKILL_TOOLS: MinimaxTool[] = [
@@ -140,6 +143,86 @@ export const SKILL_TOOLS: MinimaxTool[] = [
 					volume: { type: "number" },
 				},
 				required: ["elementId", "volume"],
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "set_aspect_ratio",
+			description:
+				"Set the canvas/video format. Use for 'ponlo vertical', 'formato tiktok', '9:16', 'cuadrado', '16:9'.",
+			parameters: {
+				type: "object",
+				properties: {
+					ratio: {
+						type: "string",
+						enum: ["9:16", "1:1", "4:5", "16:9"],
+						description: "9:16 = TikTok/vertical, 1:1 = square, 16:9 = horizontal",
+					},
+				},
+				required: ["ratio"],
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "add_background_music",
+			description:
+				"Add background music. Prefer an imported audio asset: pass its mediaId (from the assets list). Or pass a URL for external audio.",
+			parameters: {
+				type: "object",
+				properties: {
+					mediaId: { type: "string", description: "mediaId of an imported audio asset" },
+					url: { type: "string", description: "Audio URL (alternative to mediaId)" },
+					timelineStart: { type: "number" },
+				},
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "add_clip",
+			description:
+				"Add an imported video/image asset to the timeline. Pass the mediaId from the assets list.",
+			parameters: {
+				type: "object",
+				properties: {
+					mediaId: { type: "string", description: "mediaId of an imported asset" },
+					timelineStart: { type: "number" },
+				},
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "change_speed",
+			description:
+				"Change playback speed of a clip (slow motion or speed up). rate < 1 slower, > 1 faster.",
+			parameters: {
+				type: "object",
+				properties: {
+					elementId: { type: "string" },
+					speed: { type: "number", description: "e.g. 0.5 = half speed, 2 = double" },
+				},
+				required: ["elementId", "speed"],
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "separate_audio",
+			description:
+				"Separate/detach a video clip's audio into its own audio track. Use this for requests like 'separa el audio del video', 'extrae el audio', 'split audio from video'. Pass the elementId of the VIDEO element.",
+			parameters: {
+				type: "object",
+				properties: {
+					elementId: { type: "string", description: "elementId of the video clip" },
+				},
 			},
 		},
 	},

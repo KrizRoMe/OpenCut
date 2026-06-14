@@ -4,7 +4,7 @@
 
 import { EditorCore } from "@/core";
 import type { SceneTracks, TimelineTrack } from "@/lib/timeline";
-import type { EditorSnapshot, ElementSummary } from "./types";
+import type { AssetSummary, EditorSnapshot, ElementSummary } from "./types";
 
 function flattenTracks({ tracks }: { tracks: SceneTracks }): TimelineTrack[] {
 	return [tracks.main, ...tracks.overlay, ...tracks.audio];
@@ -43,13 +43,28 @@ export function getEditorSnapshot(): EditorSnapshot {
 		}
 	}
 
+	const assets: AssetSummary[] = editor.media.getAssets().map((a) => ({
+		mediaId: a.id,
+		name: a.name,
+		type: a.type,
+		duration: a.duration ?? 0,
+		hasAudio: a.hasAudio ?? a.type === "audio",
+	}));
+
 	return {
 		hasProject: project != null,
 		projectId: project?.metadata.id ?? null,
 		projectName: project?.metadata.name ?? null,
+		canvasSize: project
+			? {
+					width: project.settings.canvasSize.width,
+					height: project.settings.canvasSize.height,
+				}
+			: null,
 		totalDuration: editor.timeline.getTotalDuration(),
 		canUndo: editor.command.canUndo(),
 		canRedo: editor.command.canRedo(),
 		elements,
+		assets,
 	};
 }

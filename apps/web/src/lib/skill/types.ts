@@ -15,6 +15,11 @@ export type SkillActionName =
 	| "move_clip"
 	| "remove_clip"
 	| "change_volume"
+	| "separate_audio"
+	| "change_speed"
+	| "add_clip"
+	| "add_background_music"
+	| "set_aspect_ratio"
 	| "zoom_timeline"
 	| "export_video"
 	| "undo"
@@ -39,14 +44,24 @@ export interface ElementSummary {
 	volume?: number;
 }
 
+export interface AssetSummary {
+	mediaId: string;
+	name: string;
+	type: string; // "video" | "audio" | "image"
+	duration: number;
+	hasAudio: boolean;
+}
+
 export interface EditorSnapshot {
 	hasProject: boolean;
 	projectId: string | null;
 	projectName: string | null;
+	canvasSize: { width: number; height: number } | null;
 	totalDuration: number;
 	canUndo: boolean;
 	canRedo: boolean;
 	elements: ElementSummary[];
+	assets: AssetSummary[];
 }
 
 export type SkillResult =

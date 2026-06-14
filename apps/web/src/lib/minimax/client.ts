@@ -42,14 +42,39 @@ export async function callMinimax({
 	const apiKey = process.env.MINIMAX_API_KEY;
 	if (!apiKey) throw new Error("MINIMAX_API_KEY is not set");
 
-	const response = await fetch(MINIMAX_API_URL, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${apiKey}`,
-		},
-		body: JSON.stringify({ model: MODEL, messages, tools, tool_choice: "auto" }),
+	const requestBody = JSON.stringify({
+		model: MODEL,
+		messages,
+		tools,
+		tool_choice: "auto",
 	});
+
+	// Retry transient network failures ("fetch failed") a couple of times.
+	let response: Response | undefined;
+	let lastErr: unknown;
+	for (let attempt = 0; attempt < 3; attempt++) {
+		try {
+			response = await fetch(MINIMAX_API_URL, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${apiKey}`,
+				},
+				body: requestBody,
+				signal: AbortSignal.timeout(60000),
+			});
+			break;
+		} catch (err) {
+			lastErr = err;
+			await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+		}
+	}
+
+	if (!response) {
+		throw new Error(
+			`MiniMax request failed: ${lastErr instanceof Error ? lastErr.message : "network error"}`,
+		);
+	}
 
 	if (!response.ok) {
 		const body = await response.text();

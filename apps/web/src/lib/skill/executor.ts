@@ -5,12 +5,13 @@
 
 import { EditorCore } from "@/core";
 import {
+	buildElementFromMedia,
 	buildLibraryAudioElement,
 	buildTextElement,
 } from "@/lib/timeline/element-utils";
 import type { ExportQuality } from "@/lib/export";
 import { getEditorSnapshot } from "./state";
-import type { SkillAction, SkillResult } from "./types";
+import type { AssetSummary, SkillAction, SkillResult } from "./types";
 
 function ok(message: string, extra?: Record<string, unknown>): SkillResult {
 	return { success: true, message, snapshot: getEditorSnapshot(), extra };
@@ -33,6 +34,37 @@ function str(value: unknown): string | undefined {
 function resolveTrack({ elementId }: { elementId: string }): string | null {
 	const snapshot = getEditorSnapshot();
 	return snapshot.elements.find((e) => e.elementId === elementId)?.trackId ?? null;
+}
+
+// Resolve an imported media asset by id, by (fuzzy) name, or fall back to the
+// first asset of the requested type. Lets the user say "usa el audio tal".
+function resolveAsset({
+	hint,
+	type,
+}: {
+	hint?: string;
+	type: "audio" | "video" | "image";
+}): AssetSummary | null {
+	const assets = getEditorSnapshot().assets.filter((a) => a.type === type);
+	if (assets.length === 0) return null;
+	if (!hint) return assets[0];
+	const lower = hint.toLowerCase();
+	return (
+		assets.find((a) => a.mediaId === hint) ??
+		assets.find((a) => a.name.toLowerCase().includes(lower)) ??
+		assets[0]
+	);
+}
+
+function mapAspect({ ratio }: { ratio?: string }): { width: number; height: number } {
+	const r = (ratio ?? "9:16").toLowerCase();
+	if (r.includes("16:9") || r.includes("horizontal") || r.includes("landscape"))
+		return { width: 1920, height: 1080 };
+	if (r.includes("1:1") || r.includes("square") || r.includes("cuadrado"))
+		return { width: 1080, height: 1080 };
+	if (r.includes("4:5")) return { width: 1080, height: 1350 };
+	// Default: vertical 9:16 (TikTok / Reels / Shorts)
+	return { width: 1080, height: 1920 };
 }
 
 function mapQuality({ resolution }: { resolution?: string }): ExportQuality {
@@ -188,6 +220,97 @@ export async function executeSkillAction({
 					updates: [{ trackId, elementId, patch: { volume } as never }],
 				});
 				return ok(`Volumen ajustado a ${volume}.`);
+			}
+
+			case "add_background_music": {
+				// Use an imported audio asset (or a URL) as background music.
+				const url = str(payload.url ?? payload.sourceUrl);
+				const startTime = num(payload.timelineStart ?? payload.startTime, 0);
+				if (url) {
+					const element = buildLibraryAudioElement({
+						sourceUrl: url,
+						name: str(payload.name) ?? "Música de fondo",
+						duration: num(payload.sourceDuration ?? payload.duration, 30),
+						startTime,
+					});
+					editor.timeline.insertElement({ element, placement: { mode: "auto" } });
+					return ok("Música de fondo añadida.");
+				}
+				const asset = resolveAsset({
+					hint: str(payload.mediaId ?? payload.assetName ?? payload.name),
+					type: "audio",
+				});
+				if (!asset)
+					return fail(
+						"No hay ningún audio importado. Importa un audio o pásame una URL.",
+					);
+				const element = buildElementFromMedia({
+					mediaId: asset.mediaId,
+					mediaType: "audio",
+					name: asset.name,
+					duration: asset.duration || num(payload.duration, 30),
+					startTime,
+				});
+				editor.timeline.insertElement({ element, placement: { mode: "auto" } });
+				return ok(`"${asset.name}" añadido como música de fondo.`);
+			}
+
+			case "add_clip": {
+				// Add an imported video/image asset to the timeline.
+				const requested = str(payload.mediaId ?? payload.assetName ?? payload.name);
+				const asset =
+					resolveAsset({ hint: requested, type: "video" }) ??
+					resolveAsset({ hint: requested, type: "image" });
+				if (!asset)
+					return fail("No hay ningún video/imagen importado para añadir.");
+				const element = buildElementFromMedia({
+					mediaId: asset.mediaId,
+					mediaType: asset.type as "video" | "image",
+					name: asset.name,
+					duration: asset.duration || num(payload.duration, 5),
+					startTime: num(payload.timelineStart ?? payload.startTime, 0),
+				});
+				editor.timeline.insertElement({ element, placement: { mode: "auto" } });
+				return ok(`"${asset.name}" añadido al timeline.`);
+			}
+
+			case "change_speed": {
+				const elementId = str(payload.clipId ?? payload.elementId);
+				if (!elementId) return fail("Falta elementId del clip.");
+				const trackId = resolveTrack({ elementId });
+				if (!trackId) return fail("No se encontró el clip.");
+				const rate = Math.max(0.25, Math.min(4, num(payload.speed ?? payload.rate, 1)));
+				editor.timeline.updateElementRetime({
+					trackId,
+					elementId,
+					retime: { rate, maintainPitch: true },
+				});
+				return ok(`Velocidad cambiada a ${rate}x.`);
+			}
+
+			case "set_aspect_ratio": {
+				const size = mapAspect({ ratio: str(payload.ratio ?? payload.aspect ?? payload.format) });
+				await editor.project.updateSettings({
+					settings: { canvasSize: size, canvasSizeMode: "custom" },
+				});
+				return ok(`Formato cambiado a ${size.width}×${size.height}.`);
+			}
+
+			case "separate_audio": {
+				// Detach a video clip's source audio into its own audio track.
+				let elementId = str(payload.clipId ?? payload.elementId);
+				// If the model didn't specify, target the first video element.
+				if (!elementId) {
+					const video = getEditorSnapshot().elements.find(
+						(e) => e.type === "video",
+					);
+					elementId = video?.elementId;
+				}
+				if (!elementId) return fail("No hay ningún clip de video para separar el audio.");
+				const trackId = resolveTrack({ elementId });
+				if (!trackId) return fail("No se encontró el clip de video.");
+				editor.timeline.toggleSourceAudioSeparation({ trackId, elementId });
+				return ok("Audio separado del video en una pista independiente.");
 			}
 
 			case "zoom_timeline": {
