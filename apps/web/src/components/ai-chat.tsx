@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Bot, Loader2, Send, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/utils/ui";
 import { getEditorSnapshot } from "@/lib/skill/state";
 import { executeSkillAction } from "@/lib/skill/executor";
@@ -26,6 +25,7 @@ export function AiChat() {
 	const [input, setInput] = useState("");
 	const [loading, setLoading] = useState(false);
 	const scrollRef = useRef<HTMLDivElement>(null);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
 		scrollRef.current?.scrollTo({
@@ -34,12 +34,28 @@ export function AiChat() {
 		});
 	}, [messages, loading]);
 
+	// Grow the textarea with its content (ChatGPT-style), capped at ~6 lines.
+	function autoResize() {
+		const el = textareaRef.current;
+		if (!el) return;
+		el.style.height = "auto";
+		el.style.height = `${Math.min(el.scrollHeight, 140)}px`;
+	}
+
 	async function send() {
 		const text = input.trim();
 		if (!text || loading) return;
 
+		// Recent conversation context (last 5 exchanges = up to 10 messages) so the
+		// model can resolve follow-ups like "no, me refiero a…".
+		const history = messages.slice(-10).map((m) => ({
+			role: m.role,
+			content: m.content,
+		}));
+
 		setMessages((m) => [...m, { id: uid(), role: "user", content: text }]);
 		setInput("");
+		if (textareaRef.current) textareaRef.current.style.height = "auto";
 		setLoading(true);
 
 		try {
@@ -50,7 +66,7 @@ export function AiChat() {
 			const res = await fetch("/api/ai/interpret", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ message: text, snapshot }),
+				body: JSON.stringify({ message: text, snapshot, history }),
 			});
 			const data = await res.json();
 
@@ -160,30 +176,38 @@ export function AiChat() {
 						)}
 					</div>
 
-					<div className="flex items-center gap-1.5 border-t border-border px-2 py-2">
-						<Input
-							value={input}
-							onChange={(e) => setInput(e.target.value)}
-							onKeyDown={(e) => {
-								if (e.key === "Enter" && !e.shiftKey) {
-									e.preventDefault();
-									send();
-								}
-							}}
-							placeholder="Escribe una instrucción…"
-							disabled={loading}
-							data-testid="ai-chat-input"
-							className="h-8"
-						/>
-						<Button
-							size="icon"
-							onClick={send}
-							disabled={loading || !input.trim()}
-							data-testid="ai-chat-send"
-							aria-label="Enviar"
-						>
-							<Send className="size-3.5" />
-						</Button>
+					<div className="border-t border-border p-2">
+						<div className="flex items-end gap-1.5 rounded-md border border-border bg-input/30 px-2 py-1.5 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
+							<textarea
+								ref={textareaRef}
+								rows={1}
+								value={input}
+								onChange={(e) => {
+									setInput(e.target.value);
+									autoResize();
+								}}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" && !e.shiftKey) {
+										e.preventDefault();
+										send();
+									}
+								}}
+								placeholder="Escribe una instrucción…"
+								disabled={loading}
+								data-testid="ai-chat-input"
+								className="max-h-[140px] min-h-[1.25rem] w-full resize-none self-center bg-transparent text-xs leading-relaxed text-foreground outline-none placeholder:text-muted-foreground"
+							/>
+							<Button
+								size="icon"
+								onClick={send}
+								disabled={loading || !input.trim()}
+								data-testid="ai-chat-send"
+								aria-label="Enviar"
+								className="shrink-0"
+							>
+								<Send className="size-3.5" />
+							</Button>
+						</div>
 					</div>
 				</div>
 			)}

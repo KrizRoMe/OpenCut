@@ -6,9 +6,15 @@ import { NextResponse } from "next/server";
 import { callMinimax } from "@/lib/minimax/client";
 import { SKILL_SYSTEM_PROMPT, SKILL_TOOLS } from "@/lib/minimax/tools";
 
+interface HistoryMessage {
+	role: "user" | "assistant";
+	content: string;
+}
+
 interface InterpretBody {
 	message?: string;
 	snapshot?: unknown;
+	history?: HistoryMessage[];
 }
 
 export async function POST(request: Request) {
@@ -28,10 +34,23 @@ export async function POST(request: Request) {
 		? `Current editor state:\n${JSON.stringify(body.snapshot, null, 2)}\n\n`
 		: "No project state provided.\n\n";
 
+	// Keep the last 5 exchanges (10 messages) of context for follow-up clarity.
+	const history = Array.isArray(body.history)
+		? body.history
+				.filter(
+					(m) =>
+						(m?.role === "user" || m?.role === "assistant") &&
+						typeof m.content === "string",
+				)
+				.slice(-10)
+				.map((m) => ({ role: m.role, content: m.content }))
+		: [];
+
 	try {
 		const response = await callMinimax({
 			messages: [
 				{ role: "system", content: SKILL_SYSTEM_PROMPT },
+				...history,
 				{ role: "user", content: `${stateContext}User request: ${message}` },
 			],
 			tools: SKILL_TOOLS,
