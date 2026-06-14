@@ -220,10 +220,20 @@ export async function executeSkillAction({
 				const trackId = resolveTrack({ elementId });
 				if (!trackId) return fail("No se encontró el clip.");
 				const volume = Math.max(0, Math.min(2, num(payload.volume, 1)));
+				// volume alone doesn't silence a video clip (gated by `muted`), so sync
+				// the muted flag with a 0 volume to make "quita el audio" actually work.
 				editor.timeline.updateElements({
-					updates: [{ trackId, elementId, patch: { volume } as never }],
+					updates: [
+						{
+							trackId,
+							elementId,
+							patch: { volume, muted: volume === 0 } as never,
+						},
+					],
 				});
-				return ok(`Volumen ajustado a ${volume}.`);
+				return ok(
+					volume === 0 ? "Audio silenciado." : `Volumen ajustado a ${volume}.`,
+				);
 			}
 
 			case "add_background_music": {
@@ -410,23 +420,42 @@ export async function executeSkillAction({
 					videos.find((v) => v.id !== target.id);
 				if (!source) return fail("No encontré el clip fuente del audio.");
 
+				// Count audio elements before separation to confirm extraction worked.
+				const countAudio = () => {
+					const sc = editor.scenes.getActiveSceneOrNull();
+					return sc ? sc.tracks.audio.reduce((n, t) => n + t.elements.length, 0) : 0;
+				};
+				const audioBefore = countAudio();
+
 				// 1) Detach the source clip's audio into its own track.
 				editor.timeline.toggleSourceAudioSeparation({
 					trackId: source.trackId,
 					elementId: source.id,
 				});
-				// 2) Remove the source clip's video (its audio stays separated).
+
+				if (countAudio() <= audioBefore) {
+					return fail(
+						"El clip fuente no tiene audio extraíble, así que no se pudo reemplazar el audio.",
+					);
+				}
+
+				// 2) Remove the source clip's video (its separated audio stays).
 				editor.timeline.deleteElements({
 					elements: [{ trackId: source.trackId, elementId: source.id }],
 				});
-				// 3) Mute the target clip's own audio.
+				// 3) Remove the target clip's OWN audio. For video elements the audio
+				// is gated by isSourceAudioEnabled (not volume), so disable it + mute.
 				editor.timeline.updateElements({
 					updates: [
-						{ trackId: target.trackId, elementId: target.id, patch: { volume: 0 } as never },
+						{
+							trackId: target.trackId,
+							elementId: target.id,
+							patch: { isSourceAudioEnabled: false, muted: true } as never,
+						},
 					],
 				});
 				return ok(
-					"Audio reemplazado: el video del clip destino conserva el audio del clip fuente.",
+					"Listo. El clip destino conserva su VIDEO (su audio original quedó silenciado) y ahora suena el AUDIO del clip fuente (su video se eliminó). Ya no necesitas hacer nada más.",
 				);
 			}
 
