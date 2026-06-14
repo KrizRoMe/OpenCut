@@ -57,8 +57,8 @@ export async function POST(request: Request) {
 		});
 
 		const choice = response.choices?.[0];
-		const toolCall = choice?.message?.tool_calls?.[0];
-		if (!toolCall) {
+		const toolCalls = choice?.message?.tool_calls ?? [];
+		if (toolCalls.length === 0) {
 			return NextResponse.json(
 				{
 					success: false,
@@ -69,20 +69,23 @@ export async function POST(request: Request) {
 			);
 		}
 
-		let payload: Record<string, unknown> = {};
-		try {
-			payload = JSON.parse(toolCall.function.arguments || "{}");
-		} catch {
-			return NextResponse.json(
-				{ success: false, error: "No se pudieron leer los argumentos." },
-				{ status: 400 },
-			);
-		}
+		// A request may decompose into several ordered actions (composite edits).
+		const actions = toolCalls.map((tc) => {
+			let payload: Record<string, unknown> = {};
+			try {
+				payload = JSON.parse(tc.function.arguments || "{}");
+			} catch {
+				payload = {};
+			}
+			return { action: tc.function.name, payload };
+		});
 
 		return NextResponse.json({
 			success: true,
-			action: toolCall.function.name,
-			payload,
+			actions,
+			// Back-compat: first action also exposed directly.
+			action: actions[0].action,
+			payload: actions[0].payload,
 		});
 	} catch (err) {
 		return NextResponse.json(

@@ -83,17 +83,25 @@ export function AiChat() {
 				return;
 			}
 
-			// 3. Execute the action against EditorCore (client-side)
-			const result = await executeSkillAction({
-				action: data.action as SkillActionName,
-				payload: data.payload ?? {},
-			});
+			// 3. Execute the action(s) against EditorCore (client-side), in order.
+			// A composite request may decompose into several ordered actions.
+			const actions: Array<{ action: string; payload?: Record<string, unknown> }> =
+				Array.isArray(data.actions) && data.actions.length > 0
+					? data.actions
+					: [{ action: data.action, payload: data.payload }];
+
+			const outcomes: string[] = [];
+			for (const act of actions) {
+				const result = await executeSkillAction({
+					action: act.action as SkillActionName,
+					payload: act.payload ?? {},
+				});
+				outcomes.push(result.success ? result.message : `⚠️ ${result.error}`);
+			}
 
 			setMessages((m) => [
 				...m,
-				result.success
-					? { id: uid(), role: "assistant", content: result.message }
-					: { id: uid(), role: "assistant", content: result.error, error: true },
+				{ id: uid(), role: "assistant", content: outcomes.join("\n") },
 			]);
 		} catch (err) {
 			setMessages((m) => [

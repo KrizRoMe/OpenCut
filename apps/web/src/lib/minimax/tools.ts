@@ -1,7 +1,15 @@
 import type { MinimaxTool } from "./client";
 
 export const SKILL_SYSTEM_PROMPT = `You are the editing assistant for OpenCut, a video editor.
-Translate the user's request into exactly ONE tool call — never answer with plain text.
+Translate the user's request into one or more tool calls — never answer with plain text.
+For multi-step / composite requests, emit SEVERAL tool calls IN THE CORRECT ORDER (they run sequentially). Always use the real elementId/mediaId from the provided state.
+Common TikTok composites and how to handle them:
+- "intercambia/reemplaza el audio: video 1 con audio del 2 (y borra el video del 2)" => replace_audio ONLY. It is self-contained: it already detaches the source audio, DELETES the source clip's video, and mutes the target. Do NOT add remove_clip or change_volume after it.
+- "inserta el clip 2 en el segundo N como continuación en una sola línea" => insert_as_continuation (single composite tool).
+- "quita el audio original y pon música de fondo" => change_volume(0) on the clip + add_background_music (two tool calls, in that order).
+- "ponlo vertical y agrégale subtítulos" => set_aspect_ratio + add_text (two calls).
+- "corta los primeros N segundos y acelera el clip" => trim_clip + change_speed.
+When unsure whether to compose, prefer the dedicated composite tool (replace_audio / insert_as_continuation) over multiple low-level calls.
 Times and durations are in seconds (floating point).
 The current editor state (with the REAL elementId and trackId of every clip/text/audio) is given in the user message. Always use those exact IDs when targeting an element.
 "el inicio" / "the beginning" means startTime 0.
@@ -236,6 +244,27 @@ export const SKILL_TOOLS: MinimaxTool[] = [
 					speed: { type: "number", description: "e.g. 0.5 = half speed, 2 = double" },
 				},
 				required: ["elementId", "speed"],
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "replace_audio",
+			description:
+				"Composite: keep one clip's VIDEO but use ANOTHER clip's AUDIO. Detaches the source clip's audio, deletes the source clip's video, and mutes the target clip's own audio. Use for 'quita el audio del clip 1 y usa el del clip 2', 'reemplaza el audio', 'el video 1 con el audio del 2'.",
+			parameters: {
+				type: "object",
+				properties: {
+					targetClipId: {
+						type: "string",
+						description: "elementId of the clip whose VIDEO is kept (audio muted)",
+					},
+					sourceClipId: {
+						type: "string",
+						description: "elementId of the clip whose AUDIO is used (its video is deleted)",
+					},
+				},
 			},
 		},
 	},

@@ -385,6 +385,51 @@ export async function executeSkillAction({
 				return ok(`Formato cambiado a ${size.width}×${size.height}.`);
 			}
 
+			case "replace_audio": {
+				// Composite: keep the target video but with the SOURCE clip's audio.
+				// Steps: separate source audio -> delete source video -> mute target audio.
+				const scene = editor.scenes.getActiveSceneOrNull();
+				if (!scene) return fail("No hay escena activa.");
+				const videoTracks = [scene.tracks.main, ...scene.tracks.overlay].filter(
+					(t) => t.type === "video",
+				);
+				const videos: Array<{ trackId: string; id: string }> = [];
+				for (const t of videoTracks)
+					for (const el of t.elements) videos.push({ trackId: t.id, id: el.id });
+				if (videos.length < 2)
+					return fail("Necesito dos clips de video (destino y fuente del audio).");
+
+				const targetId = str(payload.targetClipId ?? payload.keepVideoOf);
+				const sourceId = str(payload.sourceClipId ?? payload.useAudioOf);
+				const target =
+					(targetId && videos.find((v) => v.id === targetId)) ||
+					videos.find((v) => v.trackId === scene.tracks.main.id) ||
+					videos[0];
+				const source =
+					(sourceId && videos.find((v) => v.id === sourceId)) ||
+					videos.find((v) => v.id !== target.id);
+				if (!source) return fail("No encontré el clip fuente del audio.");
+
+				// 1) Detach the source clip's audio into its own track.
+				editor.timeline.toggleSourceAudioSeparation({
+					trackId: source.trackId,
+					elementId: source.id,
+				});
+				// 2) Remove the source clip's video (its audio stays separated).
+				editor.timeline.deleteElements({
+					elements: [{ trackId: source.trackId, elementId: source.id }],
+				});
+				// 3) Mute the target clip's own audio.
+				editor.timeline.updateElements({
+					updates: [
+						{ trackId: target.trackId, elementId: target.id, patch: { volume: 0 } as never },
+					],
+				});
+				return ok(
+					"Audio reemplazado: el video del clip destino conserva el audio del clip fuente.",
+				);
+			}
+
 			case "separate_audio": {
 				// Detach a video clip's source audio into its own audio track.
 				let elementId = str(payload.clipId ?? payload.elementId);

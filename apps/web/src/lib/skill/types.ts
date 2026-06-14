@@ -16,6 +16,7 @@ export type SkillActionName =
 	| "remove_clip"
 	| "change_volume"
 	| "separate_audio"
+	| "replace_audio"
 	| "change_speed"
 	| "add_clip"
 	| "insert_as_continuation"
