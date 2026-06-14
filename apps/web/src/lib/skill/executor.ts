@@ -10,8 +10,12 @@ import {
 	buildTextElement,
 } from "@/lib/timeline/element-utils";
 import type { ExportQuality } from "@/lib/export";
+import { TICKS_PER_SECOND } from "@/lib/wasm/ticks";
 import { getEditorSnapshot } from "./state";
 import type { AssetSummary, SkillAction, SkillResult } from "./types";
+
+// The LLM/skill speaks in seconds; EditorCore stores integer "ticks".
+const toTicks = (seconds: number): number => Math.round(seconds * TICKS_PER_SECOND);
 
 function ok(message: string, extra?: Record<string, unknown>): SkillResult {
 	return { success: true, message, snapshot: getEditorSnapshot(), extra };
@@ -115,12 +119,12 @@ export async function executeSkillAction({
 				const element = buildTextElement({
 					raw: {
 						content,
-						duration,
+						duration: toTicks(duration),
 						fontSize: payload.fontSize ? num(payload.fontSize, 48) : undefined,
 						color: str(payload.color),
 						textAlign: str(payload.align) as never,
 					},
-					startTime,
+					startTime: toTicks(startTime),
 				});
 				editor.timeline.insertElement({ element, placement: { mode: "auto" } });
 				return ok(`Texto "${content}" añadido.`);
@@ -149,8 +153,8 @@ export async function executeSkillAction({
 				const element = buildLibraryAudioElement({
 					sourceUrl: url,
 					name: str(payload.name) ?? "Audio",
-					duration,
-					startTime,
+					duration: toTicks(duration),
+					startTime: toTicks(startTime),
 				});
 				editor.timeline.insertElement({ element, placement: { mode: "auto" } });
 				return ok("Audio añadido.");
@@ -161,15 +165,15 @@ export async function executeSkillAction({
 				if (!elementId) return fail("Falta elementId del clip.");
 				editor.timeline.updateElementTrim({
 					elementId,
-					trimStart: num(payload.trimStart ?? payload.sourceStart, 0),
-					trimEnd: num(payload.trimEnd, 0),
+					trimStart: toTicks(num(payload.trimStart ?? payload.sourceStart, 0)),
+					trimEnd: toTicks(num(payload.trimEnd, 0)),
 					startTime:
 						payload.timelineStart != null
-							? num(payload.timelineStart, 0)
+							? toTicks(num(payload.timelineStart, 0))
 							: undefined,
 					duration:
 						payload.timelineDuration != null
-							? num(payload.timelineDuration, 0)
+							? toTicks(num(payload.timelineDuration, 0))
 							: undefined,
 				});
 				return ok("Clip recortado.");
@@ -182,7 +186,7 @@ export async function executeSkillAction({
 				if (!trackId) return fail("No se encontró el clip.");
 				editor.timeline.splitElements({
 					elements: [{ trackId, elementId }],
-					splitTime: num(payload.splitAt ?? payload.splitTime, 0),
+					splitTime: toTicks(num(payload.splitAt ?? payload.splitTime, 0)),
 				});
 				return ok("Clip dividido.");
 			}
@@ -196,7 +200,7 @@ export async function executeSkillAction({
 					sourceTrackId: trackId,
 					targetTrackId: str(payload.targetTrackId) ?? trackId,
 					elementId,
-					newStartTime: num(payload.timelineStart ?? payload.newStartTime, 0),
+					newStartTime: toTicks(num(payload.timelineStart ?? payload.newStartTime, 0)),
 				});
 				return ok("Clip movido.");
 			}
@@ -230,8 +234,8 @@ export async function executeSkillAction({
 					const element = buildLibraryAudioElement({
 						sourceUrl: url,
 						name: str(payload.name) ?? "Música de fondo",
-						duration: num(payload.sourceDuration ?? payload.duration, 30),
-						startTime,
+						duration: toTicks(num(payload.sourceDuration ?? payload.duration, 30)),
+						startTime: toTicks(startTime),
 					});
 					editor.timeline.insertElement({ element, placement: { mode: "auto" } });
 					return ok("Música de fondo añadida.");
@@ -248,8 +252,8 @@ export async function executeSkillAction({
 					mediaId: asset.mediaId,
 					mediaType: "audio",
 					name: asset.name,
-					duration: asset.duration || num(payload.duration, 30),
-					startTime,
+					duration: toTicks(asset.duration || num(payload.duration, 30)),
+					startTime: toTicks(startTime),
 				});
 				editor.timeline.insertElement({ element, placement: { mode: "auto" } });
 				return ok(`"${asset.name}" añadido como música de fondo.`);
@@ -267,8 +271,8 @@ export async function executeSkillAction({
 					mediaId: asset.mediaId,
 					mediaType: asset.type as "video" | "image",
 					name: asset.name,
-					duration: asset.duration || num(payload.duration, 5),
-					startTime: num(payload.timelineStart ?? payload.startTime, 0),
+					duration: toTicks(asset.duration || num(payload.duration, 5)),
+					startTime: toTicks(num(payload.timelineStart ?? payload.startTime, 0)),
 				});
 				editor.timeline.insertElement({ element, placement: { mode: "auto" } });
 				return ok(`"${asset.name}" añadido al timeline.`);

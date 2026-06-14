@@ -76,9 +76,12 @@ const formatProjectDuration = ({
 		return null;
 	}
 
-	const durationSeconds = mediaTimeToSeconds({ time: duration });
+	// Media durations are in integer ticks; real media can yield fractional ticks
+	// which the wasm i64 API rejects. Round to the nearest whole tick.
+	const ticks = Math.round(duration);
+	const durationSeconds = mediaTimeToSeconds({ time: ticks });
 	const format = durationSeconds >= 3600 ? "HH:MM:SS" : "MM:SS";
-	return formatTimecode({ time: duration, format }) ?? "";
+	return formatTimecode({ time: ticks, format }) ?? "";
 };
 
 const VIEW_MODE_OPTIONS = [

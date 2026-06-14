@@ -4,7 +4,12 @@
 
 import { EditorCore } from "@/core";
 import type { SceneTracks, TimelineTrack } from "@/lib/timeline";
+import { TICKS_PER_SECOND } from "@/lib/wasm/ticks";
 import type { AssetSummary, EditorSnapshot, ElementSummary } from "./types";
+
+// EditorCore stores time in integer "ticks". The skill/LLM works in seconds.
+const toSeconds = (ticks: number): number =>
+	Math.round((ticks / TICKS_PER_SECOND) * 1000) / 1000;
 
 function flattenTracks({ tracks }: { tracks: SceneTracks }): TimelineTrack[] {
 	return [tracks.main, ...tracks.overlay, ...tracks.audio];
@@ -33,10 +38,10 @@ export function getEditorSnapshot(): EditorSnapshot {
 						element.type === "text"
 							? (element as { content?: string }).content
 							: undefined,
-					startTime: element.startTime,
-					duration: element.duration,
-					trimStart: element.trimStart,
-					trimEnd: element.trimEnd,
+					startTime: toSeconds(element.startTime),
+					duration: toSeconds(element.duration),
+					trimStart: toSeconds(element.trimStart),
+					trimEnd: toSeconds(element.trimEnd),
 					volume,
 				});
 			}
@@ -61,7 +66,7 @@ export function getEditorSnapshot(): EditorSnapshot {
 					height: project.settings.canvasSize.height,
 				}
 			: null,
-		totalDuration: editor.timeline.getTotalDuration(),
+		totalDuration: toSeconds(editor.timeline.getTotalDuration()),
 		canUndo: editor.command.canUndo(),
 		canRedo: editor.command.canRedo(),
 		elements,
