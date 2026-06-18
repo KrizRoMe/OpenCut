@@ -14,7 +14,8 @@ import {
 	getSourceSpanAtClipTime,
 	getTimelineDurationForSourceSpan,
 } from "@/lib/retime";
-import type { TimelineElement } from "@/lib/timeline";
+import type { TextBackground, TimelineElement } from "@/lib/timeline";
+import { DEFAULTS } from "@/lib/timeline/defaults";
 import type { Transform } from "@/lib/rendering";
 import {
 	type ExportQuality,
@@ -24,12 +25,9 @@ import {
 } from "@/lib/export";
 import { TICKS_PER_SECOND } from "@/lib/wasm/ticks";
 import { FONT_SIZE_SCALE_REFERENCE } from "@/lib/text/typography";
-import { extractTimelineAudio } from "@/lib/media/mediabunny";
-import { decodeAudioToFloat32 } from "@/lib/media/audio";
-import { DEFAULT_TRANSCRIPTION_SAMPLE_RATE } from "@/lib/transcription/audio";
-import { transcriptionService } from "@/services/transcription/service";
-import { buildCaptionChunks } from "@/lib/transcription/caption";
-import { insertCaptionChunksAsTextTrack } from "@/lib/subtitles/insert";
+import { useTranscriptionJobsStore } from "@/stores/transcription-jobs-store";
+import type { TranscriptionLanguage } from "@/lib/transcription/types";
+import { timelineHasAudio } from "@/lib/media/audio";
 import { getEditorSnapshot } from "./state";
 import type { AssetSummary, SkillAction, SkillResult } from "./types";
 
@@ -132,6 +130,53 @@ function str(value: unknown): string | undefined {
 	return typeof value === "string" && value.length > 0 ? value : undefined;
 }
 
+// Build a text-background patch from free-form payload keys, merged onto the
+// element's CURRENT background (mirrors the manual text properties panel, which
+// spreads ...element.background before applying changes). Returns undefined
+// when the payload requests no background change. A color implies "show the
+// box" unless backgroundEnabled is explicitly false.
+function resolveBackgroundPatch({
+	payload,
+	current,
+}: {
+	payload: Record<string, unknown>;
+	current?: TextBackground;
+}): TextBackground | undefined {
+	const color = str(
+		payload.backgroundColor ?? payload.bgColor ?? payload.background,
+	);
+	const enabledRaw =
+		payload.backgroundEnabled ?? payload.bg ?? payload.showBackground;
+	const hasEnabled = typeof enabledRaw === "boolean";
+	const hasRadius =
+		payload.backgroundRadius != null || payload.cornerRadius != null;
+	const hasPadX =
+		payload.backgroundPaddingX != null || payload.paddingX != null;
+	const hasPadY =
+		payload.backgroundPaddingY != null || payload.paddingY != null;
+	if (!color && !hasEnabled && !hasRadius && !hasPadX && !hasPadY) {
+		return undefined;
+	}
+	const base = current ?? { ...DEFAULTS.text.element.background };
+	return {
+		...base,
+		enabled: hasEnabled ? Boolean(enabledRaw) : color ? true : base.enabled,
+		color: color ?? base.color,
+		cornerRadius: hasRadius
+			? num(
+					payload.backgroundRadius ?? payload.cornerRadius,
+					base.cornerRadius ?? 0,
+				)
+			: base.cornerRadius,
+		paddingX: hasPadX
+			? num(payload.backgroundPaddingX ?? payload.paddingX, base.paddingX ?? 0)
+			: base.paddingX,
+		paddingY: hasPadY
+			? num(payload.backgroundPaddingY ?? payload.paddingY, base.paddingY ?? 0)
+			: base.paddingY,
+	};
+}
+
 // Resolve the trackId for an element if the model only provided the elementId.
 function resolveTrack({ elementId }: { elementId: string }): string | null {
 	const snapshot = getEditorSnapshot();
@@ -158,6 +203,99 @@ function resolveAsset({
 		assets.find((a) => a.name.toLowerCase().includes(lower)) ??
 		assets[0]
 	);
+}
+
+// Map a free-form language word (the LLM may pass a code or a Spanish/English
+// name) to a Whisper-friendly code. Unknown values pass through unchanged —
+// Whisper accepts both ISO codes ("es") and English names ("spanish").
+function normalizeLanguage(raw?: string): string | undefined {
+	if (!raw) return undefined;
+	const v = raw.trim().toLowerCase();
+	const map: Record<string, string> = {
+		auto: "auto",
+		español: "es",
+		espanol: "es",
+		spanish: "es",
+		es: "es",
+		inglés: "en",
+		ingles: "en",
+		english: "en",
+		en: "en",
+		portugués: "pt",
+		portugues: "pt",
+		portuguese: "pt",
+		pt: "pt",
+		francés: "fr",
+		frances: "fr",
+		french: "fr",
+		fr: "fr",
+		alemán: "de",
+		aleman: "de",
+		german: "de",
+		de: "de",
+		italiano: "it",
+		italian: "it",
+		it: "it",
+	};
+	return map[v] ?? v;
+}
+
+// Subtitles are inserted as text elements named "Caption 1", "Caption 2", ...
+// Per-source subtitles carry the source tag: "Caption video 1", "Caption audio
+// 1", etc. We target those specifically so bulk subtitle ops don't touch manual
+// text overlays. Falls back to all text elements when nothing matches the
+// naming. Pass sourceLabel to narrow to a single source's captions.
+function getSubtitleElements({
+	sourceLabel,
+}: {
+	sourceLabel?: string;
+} = {}): Array<{
+	elementId: string;
+	trackId: string;
+}> {
+	const text = getEditorSnapshot().elements.filter((e) => e.type === "text");
+	const captions = text.filter((e) =>
+		/^caption\b/i.test((e.name ?? "").trim()),
+	);
+	let pool = captions.length > 0 ? captions : text;
+	if (sourceLabel) {
+		const re = new RegExp(`^caption\\s+${sourceLabel}\\b`, "i");
+		pool = pool.filter((e) => re.test((e.name ?? "").trim()));
+	}
+	return pool.map((e) => ({
+		elementId: e.elementId,
+		trackId: e.trackId,
+	}));
+}
+
+// Resolve a free-form source hint ("video", "audio", an asset name, or an exact
+// elementId) to the timeline element whose audio should be transcribed, plus a
+// short label used to tag the resulting captions. Returns null when no hint is
+// given (→ transcribe the whole timeline) or nothing matches.
+function resolveSubtitleSource(
+	hint?: string,
+): { elementId: string; label: string } | null {
+	if (!hint) return null;
+	const elements = getEditorSnapshot().elements;
+	let target = elements.find((e) => e.elementId === hint);
+	if (!target) {
+		const h = hint.toLowerCase();
+		if (/v[ií]deo|video|clip/.test(h)) {
+			target = elements.find((e) => e.type === "video");
+		} else if (/audio|m[uú]sica|sonido|pista|voz/.test(h)) {
+			target = elements.find((e) => e.type === "audio");
+		} else {
+			target = elements.find((e) => e.name.toLowerCase().includes(h));
+		}
+	}
+	if (!target) return null;
+	const label =
+		target.type === "video"
+			? "video"
+			: target.type === "audio"
+				? "audio"
+				: "src";
+	return { elementId: target.elementId, label };
 }
 
 function mapAspect({ ratio }: { ratio?: string }): {
@@ -228,6 +366,7 @@ export async function executeSkillAction({
 						: canvas
 							? fitTextFontSize({ content, canvas })
 							: undefined;
+				const background = resolveBackgroundPatch({ payload });
 				const element = buildTextElement({
 					raw: {
 						content,
@@ -235,6 +374,7 @@ export async function executeSkillAction({
 						fontSize,
 						color: str(payload.color),
 						textAlign: str(payload.align) as never,
+						...(background ? { background } : {}),
 					},
 					startTime: toTicks(startTime),
 				});
@@ -270,6 +410,18 @@ export async function executeSkillAction({
 					patch.letterSpacing = num(payload.letterSpacing, 0);
 				if (payload.lineHeight != null)
 					patch.lineHeight = num(payload.lineHeight, 1);
+				// Background box: merge onto the element's current background.
+				const [textMatch] = editor.timeline.getElementsWithTracks({
+					elements: [{ trackId, elementId }],
+				});
+				const currentBg = (
+					textMatch?.element as { background?: TextBackground } | undefined
+				)?.background;
+				const background = resolveBackgroundPatch({
+					payload,
+					current: currentBg,
+				});
+				if (background) patch.background = background;
 				if (Object.keys(patch).length === 0)
 					return fail("No se indicó ningún cambio para el texto.");
 				editor.timeline.updateElements({
@@ -860,32 +1012,162 @@ export async function executeSkillAction({
 			}
 
 			case "generate_subtitles": {
+				// If the timeline has no audio yet but the user referenced an imported
+				// asset (e.g. "subtítulos a mi audio X.mp3"), place it first so there is
+				// something to transcribe. Only do this when the timeline is silent, to
+				// avoid duplicating a clip that's already there.
 				const scene = editor.scenes.getActiveSceneOrNull();
-				if (!scene) return fail("No hay proyecto abierto.");
-				if (editor.timeline.getTotalDuration() <= 0)
-					return fail("La línea de tiempo está vacía.");
-				const audioBlob = await extractTimelineAudio({
-					tracks: scene.tracks,
-					mediaAssets: editor.media.getAssets(),
-					totalDuration: editor.timeline.getTotalDuration(),
+				const hasAudio = scene
+					? timelineHasAudio({
+							tracks: scene.tracks,
+							mediaAssets: editor.media.getAssets(),
+						})
+					: false;
+				if (scene && !hasAudio) {
+					const hint = str(
+						payload.mediaId ??
+							payload.asset ??
+							payload.assetName ??
+							payload.name ??
+							payload.audio ??
+							payload.clip ??
+							payload.video,
+					);
+					const asset =
+						resolveAsset({ hint, type: "audio" }) ??
+						resolveAsset({ hint, type: "video" });
+					if (asset) {
+						const element = buildElementFromMedia({
+							mediaId: asset.mediaId,
+							mediaType: asset.type as "audio" | "video" | "image",
+							name: asset.name,
+							duration: toTicks(asset.duration || 30),
+							startTime: 0,
+						});
+						editor.timeline.insertElement({
+							element,
+							placement: { mode: "auto" },
+						});
+					}
+				}
+
+				// Optional per-source isolation: subtitle just one clip (e.g. only the
+				// video, or only an audio track) instead of the whole mix. Resolve
+				// AFTER any asset placement above so a just-inserted element is found.
+				const source = resolveSubtitleSource(
+					str(payload.source ?? payload.sourceElementId ?? payload.elementId),
+				);
+
+				// Fire-and-forget: the transcription runs in the background (audio
+				// extraction + on-device Whisper) so the chat turn returns immediately
+				// and the editor stays responsive. Concurrent requests queue and run
+				// sequentially. Progress + completion surface via a toast.
+				const lang = normalizeLanguage(str(payload.language));
+				const { started, reason } = useTranscriptionJobsStore
+					.getState()
+					.startTranscription({
+						language:
+							lang && lang !== "auto"
+								? (lang as TranscriptionLanguage)
+								: "auto",
+						filterElementId: source?.elementId,
+						sourceLabel: source?.label,
+					});
+				return started
+					? ok(
+							source
+								? `Generando subtítulos del ${source.label} en segundo plano… te aviso cuando estén listos.`
+								: "Generando subtítulos en segundo plano… te aviso cuando estén listos.",
+						)
+					: fail(reason ?? "No se pudo iniciar la transcripción.");
+			}
+
+			case "remove_subtitles": {
+				// Optionally remove only one source's captions ("quita los subtítulos
+				// del video"); with no source, remove all of them.
+				const source = resolveSubtitleSource(
+					str(payload.source ?? payload.sourceElementId ?? payload.elementId),
+				);
+				const subs = getSubtitleElements({ sourceLabel: source?.label });
+				if (subs.length === 0)
+					return fail(
+						source
+							? `No hay subtítulos del ${source.label} para eliminar.`
+							: "No hay subtítulos en el timeline para eliminar.",
+					);
+				editor.timeline.deleteElements({ elements: subs });
+				return ok(
+					source
+						? `Subtítulos del ${source.label} eliminados (${subs.length} líneas).`
+						: `Subtítulos eliminados (${subs.length} líneas).`,
+				);
+			}
+
+			case "style_subtitles": {
+				// Optionally restyle only one source's captions ("haz amarillos los
+				// subtítulos del video"); with no source, restyle all of them.
+				const source = resolveSubtitleSource(
+					str(payload.source ?? payload.sourceElementId),
+				);
+				const subs = getSubtitleElements({ sourceLabel: source?.label });
+				if (subs.length === 0)
+					return fail("No hay subtítulos para reestilizar.");
+				const patch: Record<string, unknown> = {};
+				if (str(payload.color)) patch.color = str(payload.color);
+				if (payload.fontSize != null) patch.fontSize = num(payload.fontSize, 5);
+				if (str(payload.fontFamily)) patch.fontFamily = str(payload.fontFamily);
+				if (str(payload.textAlign ?? payload.align))
+					patch.textAlign = str(payload.textAlign ?? payload.align);
+				if (str(payload.fontWeight) || payload.bold != null)
+					patch.fontWeight =
+						str(payload.fontWeight) ?? (payload.bold ? "bold" : "normal");
+				if (str(payload.fontStyle) || payload.italic != null)
+					patch.fontStyle =
+						str(payload.fontStyle) ?? (payload.italic ? "italic" : "normal");
+				if (str(payload.textDecoration) || payload.underline != null)
+					patch.textDecoration =
+						str(payload.textDecoration) ??
+						(payload.underline ? "underline" : "none");
+				if (payload.letterSpacing != null)
+					patch.letterSpacing = num(payload.letterSpacing, 0);
+				if (payload.lineHeight != null)
+					patch.lineHeight = num(payload.lineHeight, 1);
+				// Background box is merged per-element (each caption keeps its own
+				// padding/radius). Probe with no `current` to see if one was requested.
+				const wantsBackground =
+					resolveBackgroundPatch({ payload }) !== undefined;
+				if (Object.keys(patch).length === 0 && !wantsBackground)
+					return fail(
+						"¿Qué estilo aplico a los subtítulos? (color, tamaño, negrita, fondo…)",
+					);
+				editor.timeline.updateElements({
+					updates: subs.map((s) => {
+						const elementPatch: Record<string, unknown> = { ...patch };
+						if (wantsBackground) {
+							const [m] = editor.timeline.getElementsWithTracks({
+								elements: [{ trackId: s.trackId, elementId: s.elementId }],
+							});
+							const currentBg = (
+								m?.element as { background?: TextBackground } | undefined
+							)?.background;
+							const background = resolveBackgroundPatch({
+								payload,
+								current: currentBg,
+							});
+							if (background) elementPatch.background = background;
+						}
+						return {
+							trackId: s.trackId,
+							elementId: s.elementId,
+							patch: elementPatch as never,
+						};
+					}),
 				});
-				const { samples } = await decodeAudioToFloat32({
-					audioBlob,
-					sampleRate: DEFAULT_TRANSCRIPTION_SAMPLE_RATE,
-				});
-				const lang = str(payload.language);
-				const result = await transcriptionService.transcribe({
-					audioData: samples,
-					language: lang && lang !== "auto" ? (lang as never) : undefined,
-				});
-				const chunks = buildCaptionChunks({ segments: result.segments });
-				const createdTrackId = insertCaptionChunksAsTextTrack({
-					editor,
-					captions: chunks,
-				});
-				return createdTrackId
-					? ok(`Subtítulos automáticos generados (${chunks.length} líneas).`)
-					: fail("No se generaron subtítulos (¿el audio tiene voz?).");
+				return ok(
+					source
+						? `Estilo aplicado a ${subs.length} subtítulos del ${source.label}.`
+						: `Estilo aplicado a ${subs.length} subtítulos.`,
+				);
 			}
 
 			case "export_subtitles": {

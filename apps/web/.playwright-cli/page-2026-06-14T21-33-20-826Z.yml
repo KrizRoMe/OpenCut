@@ -1,0 +1,306 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e255] [cursor=pointer]:
+    - img [ref=e256]
+  - alert [ref=e276]
+  - generic [ref=e277]:
+    - banner [ref=e278]:
+      - generic [ref=e279]:
+        - button "Project thumbnail" [ref=e280] [cursor=pointer]:
+          - img "Project thumbnail" [ref=e281]
+        - textbox [ref=e282] [cursor=pointer]: New project
+      - navigation [ref=e283]:
+        - button "Send feedback" [ref=e284] [cursor=pointer]
+        - button "Export" [ref=e285] [cursor=pointer]:
+          - generic [ref=e286]:
+            - img [ref=e287]
+            - generic [ref=e291]: Export
+        - button "Dark" [ref=e294] [cursor=pointer]:
+          - img
+          - generic [ref=e295]: Dark
+    - generic [ref=e297]:
+      - generic [ref=e299]:
+        - generic [ref=e301]:
+          - generic [ref=e303]:
+            - button "Media" [ref=e304] [cursor=pointer]:
+              - img
+            - button "Sounds" [ref=e305] [cursor=pointer]:
+              - img
+            - button "Text" [ref=e306] [cursor=pointer]:
+              - img
+            - button "Stickers" [ref=e307] [cursor=pointer]:
+              - img
+            - button "Effects" [ref=e308] [cursor=pointer]:
+              - img
+            - button "Transitions" [ref=e309] [cursor=pointer]:
+              - img
+            - button "Captions" [ref=e310] [cursor=pointer]:
+              - img
+            - button "Adjustment" [ref=e311] [cursor=pointer]:
+              - img
+            - button "Settings" [ref=e312] [cursor=pointer]:
+              - img
+          - generic [ref=e314]:
+            - generic [ref=e315]:
+              - generic [ref=e316]: Assets
+              - generic [ref=e317]:
+                - button [ref=e318] [cursor=pointer]:
+                  - img
+                - button [ref=e319] [cursor=pointer]:
+                  - img
+                - button "Import" [ref=e320] [cursor=pointer]:
+                  - img
+                  - text: Import
+            - button "Drag and drop videos, photos, and audio files here" [ref=e323]:
+              - img [ref=e325]
+              - paragraph [ref=e329]: Drag and drop videos, photos, and audio files here
+        - separator [ref=e330]
+        - generic [ref=e333]:
+          - generic [ref=e337]:
+            - application "Preview canvas" [ref=e338]
+            - generic:
+              - img
+              - button [ref=e496]
+              - button [ref=e498]
+              - button [ref=e500]
+              - button [ref=e502]
+              - button [ref=e504]
+              - button [ref=e506]
+              - button [ref=e508]
+              - button [ref=e510]:
+                - img [ref=e511]
+          - generic [ref=e339]:
+            - generic [ref=e340]:
+              - button "00:00:00:00" [ref=e341] [cursor=pointer]
+              - generic [ref=e342]: /
+              - generic [ref=e343]: 00:00:00:00
+            - button [ref=e344] [cursor=pointer]:
+              - img
+            - generic [ref=e345]:
+              - combobox [ref=e346] [cursor=pointer]:
+                - generic [ref=e347]: Fit
+                - img [ref=e348]
+              - button [ref=e350] [cursor=pointer]:
+                - img
+        - separator [ref=e351]
+        - generic [ref=e353]:
+          - generic [ref=e513]:
+            - button "Text" [ref=e514] [cursor=pointer]:
+              - img
+            - button "Transform" [ref=e515] [cursor=pointer]:
+              - img
+            - button "Blending" [ref=e516] [cursor=pointer]:
+              - img
+          - generic [ref=e518]:
+            - generic [ref=e519]:
+              - generic [ref=e520]:
+                - button "Content" [ref=e521] [cursor=pointer]:
+                  - generic [ref=e523]: Content
+                - button "Collapse section" [ref=e525] [cursor=pointer]:
+                  - img
+              - textbox "Name" [ref=e529]: Hola Mundo
+            - generic [ref=e530]:
+              - generic [ref=e531]:
+                - button "Typography" [ref=e532] [cursor=pointer]:
+                  - generic [ref=e534]: Typography
+                - button "Collapse section" [ref=e536] [cursor=pointer]:
+                  - img
+              - generic [ref=e540]:
+                - generic [ref=e541]:
+                  - generic [ref=e543]: Font
+                  - button "Arial" [ref=e544] [cursor=pointer]:
+                    - generic [ref=e545]:
+                      - img [ref=e547]
+                      - generic [ref=e549]: Arial
+                    - img [ref=e550]
+                - generic [ref=e552]:
+                  - generic [ref=e554]: Size
+                  - generic [ref=e555]:
+                    - button "Drag to adjust value" [ref=e556]:
+                      - img [ref=e557]
+                    - textbox [ref=e561]: "15"
+                - generic [ref=e562]:
+                  - generic [ref=e563]:
+                    - button "Toggle text color keyframe" [ref=e564] [cursor=pointer]:
+                      - img
+                    - generic [ref=e565]: Color
+                  - generic [ref=e566]:
+                    - button [ref=e567] [cursor=pointer]
+                    - textbox [ref=e572]: FFFFFF
+            - generic [ref=e573]:
+              - generic [ref=e574]:
+                - button "Spacing" [ref=e575] [cursor=pointer]:
+                  - generic [ref=e577]: Spacing
+                - button "Collapse section" [ref=e579] [cursor=pointer]:
+                  - img
+              - generic [ref=e583]:
+                - generic [ref=e584]:
+                  - generic [ref=e586]: Letter spacing
+                  - generic [ref=e587]:
+                    - button "Drag to adjust value" [ref=e588]:
+                      - img "Text width" [ref=e589]
+                    - textbox [ref=e592]: "0"
+                - generic [ref=e593]:
+                  - generic [ref=e595]: Line height
+                  - generic [ref=e596]:
+                    - button "Drag to adjust value" [ref=e597]:
+                      - img "Text height" [ref=e598]
+                    - textbox [ref=e601]: "1.2"
+            - generic [ref=e602]:
+              - generic [ref=e603]:
+                - button "Background" [ref=e604] [cursor=pointer]:
+                  - generic [ref=e606]: Background
+                - generic [ref=e607]:
+                  - button [ref=e608] [cursor=pointer]:
+                    - img
+                  - button "Collapse section" [ref=e609] [cursor=pointer]:
+                    - img
+              - generic [ref=e613]:
+                - generic [ref=e614]:
+                  - generic [ref=e615]:
+                    - button "Toggle background color keyframe" [ref=e616] [cursor=pointer]:
+                      - img
+                    - generic [ref=e617]: Color
+                  - generic [ref=e618]:
+                    - button [ref=e619] [cursor=pointer]
+                    - textbox [ref=e624]: "000000"
+                - generic [ref=e625]:
+                  - generic [ref=e626]:
+                    - generic [ref=e627]:
+                      - button "Toggle background width keyframe" [ref=e628] [cursor=pointer]:
+                        - img
+                      - generic [ref=e629]: Width
+                    - generic [ref=e630]:
+                      - button "Drag to adjust value" [ref=e631]: W
+                      - textbox [ref=e633]: "30"
+                  - generic [ref=e634]:
+                    - generic [ref=e635]:
+                      - button "Toggle background height keyframe" [ref=e636] [cursor=pointer]:
+                        - img
+                      - generic [ref=e637]: Height
+                    - generic [ref=e638]:
+                      - button "Drag to adjust value" [ref=e639]: H
+                      - textbox [ref=e641]: "42"
+                - generic [ref=e642]:
+                  - generic [ref=e643]:
+                    - generic [ref=e644]:
+                      - button "Toggle x-offset keyframe" [ref=e645] [cursor=pointer]:
+                        - img
+                      - generic [ref=e646]: X-offset
+                    - generic [ref=e647]:
+                      - button "Drag to adjust value" [ref=e648]: X
+                      - textbox [ref=e650]: "0"
+                  - generic [ref=e651]:
+                    - generic [ref=e652]:
+                      - button "Toggle y-offset keyframe" [ref=e653] [cursor=pointer]:
+                        - img
+                      - generic [ref=e654]: Y-offset
+                    - generic [ref=e655]:
+                      - button "Drag to adjust value" [ref=e656]: "Y"
+                      - textbox [ref=e658]: "0"
+                - generic [ref=e659]:
+                  - generic [ref=e660]:
+                    - button "Toggle corner radius keyframe" [ref=e661] [cursor=pointer]:
+                      - img
+                    - generic [ref=e662]: Corner radius
+                  - generic [ref=e663]:
+                    - button "Drag to adjust value" [ref=e664]: R
+                    - textbox [ref=e666]: "0"
+      - separator [ref=e362]
+      - region "Timeline" [ref=e364]:
+        - generic [ref=e366]:
+          - generic [ref=e367]:
+            - button [ref=e368] [cursor=pointer]:
+              - img
+            - button [ref=e369] [cursor=pointer]:
+              - img
+            - button [ref=e370] [cursor=pointer]:
+              - img
+            - generic [ref=e371]:
+              - button [disabled]:
+                - img
+            - button [ref=e372] [cursor=pointer]:
+              - img
+            - generic [ref=e373]:
+              - button [disabled]:
+                - img
+            - button [ref=e374] [cursor=pointer]:
+              - img
+            - button [ref=e376] [cursor=pointer]:
+              - img
+            - generic [ref=e377]:
+              - button [disabled]:
+                - img
+          - generic [ref=e379]:
+            - button "Main scene" [ref=e380]:
+              - generic [ref=e381]: Main scene
+            - button [ref=e382] [cursor=pointer]:
+              - img
+          - generic [ref=e383]:
+            - button [ref=e384] [cursor=pointer]:
+              - img
+            - button [ref=e385] [cursor=pointer]:
+              - img
+            - generic [ref=e387]:
+              - button [ref=e388] [cursor=pointer]:
+                - img
+              - slider [ref=e392]
+              - button [ref=e393] [cursor=pointer]:
+                - img
+        - generic [ref=e394]:
+          - generic [ref=e399]:
+            - generic [ref=e668]:
+              - img [ref=e669] [cursor=pointer]
+              - img [ref=e672]
+            - generic [ref=e401]:
+              - img [ref=e402] [cursor=pointer]
+              - img [ref=e406] [cursor=pointer]
+              - img "Video" [ref=e409]
+          - generic [ref=e412]:
+            - generic [ref=e414]:
+              - slider "Timeline ruler" [ref=e415]:
+                - generic [ref=e416]: 00:00
+                - generic [ref=e421]: 15f
+                - generic [ref=e426]: 00:01
+                - generic [ref=e431]: 15f
+                - generic [ref=e436]: 00:02
+                - generic [ref=e441]: 15f
+                - generic [ref=e446]: 00:03
+                - generic [ref=e451]: 15f
+                - generic [ref=e456]: 00:04
+              - button "Timeline ruler" [ref=e458]
+            - generic [ref=e461]:
+              - generic [ref=e675]:
+                - button "Select Text track track" [ref=e676]
+                - generic [ref=e677]:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - button "Hola Mundo":
+                            - generic [ref=e678]:
+                              - generic: Hola Mundo
+                      - button "Left resize handle" [ref=e679]
+                      - button "Right resize handle" [ref=e680]
+              - button "Select Main Track track" [ref=e464]
+            - slider "Timeline playhead":
+              - button "Drag playhead" [ref=e467]
+    - generic [ref=e468]:
+      - generic [ref=e470]:
+        - generic [ref=e471]:
+          - generic [ref=e472]:
+            - img [ref=e473]
+            - generic [ref=e476]: Asistente de edición
+          - button "Cerrar" [ref=e477] [cursor=pointer]:
+            - img
+        - generic [ref=e478]:
+          - generic [ref=e489]: agrega un texto que diga Hola Mundo al inicio por 4 segundos
+          - generic [ref=e495]: fetch failed
+          - generic [ref=e682]: agrega un texto que diga Hola Mundo al inicio por 4 segundos
+          - generic [ref=e684]: Texto "Hola Mundo" añadido.
+        - generic [ref=e484]:
+          - textbox "Escribe una instrucción…" [ref=e486]
+          - button "Enviar" [disabled]:
+            - img
+      - button "Asistente de edición IA" [ref=e469] [cursor=pointer]:
+        - img

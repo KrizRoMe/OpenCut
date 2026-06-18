@@ -27,6 +27,8 @@ export type SkillActionName =
 	| "add_background_music"
 	| "add_sound_effect"
 	| "generate_subtitles"
+	| "remove_subtitles"
+	| "style_subtitles"
 	| "export_subtitles"
 	| "set_aspect_ratio"
 	| "zoom_timeline"

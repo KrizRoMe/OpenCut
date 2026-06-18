@@ -133,6 +133,15 @@ async function handleTranscribe({
 
 	cancelled = false;
 
+	// The model is loaded; signal that actual transcription is starting so the UI
+	// can switch from "loading model" to "transcribing" (the long step). The
+	// underlying pipeline doesn't expose incremental progress, so this is a single
+	// "started" tick rather than a percentage.
+	self.postMessage({
+		type: "transcribe-progress",
+		progress: 0,
+	} satisfies WorkerResponse);
+
 	try {
 		const rawResult = await transcriber(audio, {
 			chunk_length_s: DEFAULT_CHUNK_LENGTH_SECONDS,

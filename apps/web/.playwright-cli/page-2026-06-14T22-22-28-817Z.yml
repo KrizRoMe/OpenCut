@@ -1,0 +1,159 @@
+- generic [ref=e1]:
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e255] [cursor=pointer]:
+    - img [ref=e256]
+  - alert [ref=e276]
+  - generic [ref=e277]:
+    - banner [ref=e278]:
+      - generic [ref=e279]:
+        - button "Project thumbnail" [ref=e280] [cursor=pointer]:
+          - img "Project thumbnail" [ref=e281]
+        - textbox [ref=e282] [cursor=pointer]: New project
+      - navigation [ref=e283]:
+        - button "Send feedback" [ref=e284] [cursor=pointer]
+        - button "Export" [ref=e285] [cursor=pointer]:
+          - generic [ref=e286]:
+            - img [ref=e287]
+            - generic [ref=e291]: Export
+        - button "Dark" [ref=e294] [cursor=pointer]:
+          - img
+          - generic [ref=e295]: Dark
+    - generic [ref=e297]:
+      - generic [ref=e299]:
+        - generic [ref=e301]:
+          - generic [ref=e303]:
+            - button "Media" [ref=e304] [cursor=pointer]:
+              - img
+            - button "Sounds" [ref=e305] [cursor=pointer]:
+              - img
+            - button "Text" [ref=e306] [cursor=pointer]:
+              - img
+            - button "Stickers" [ref=e307] [cursor=pointer]:
+              - img
+            - button "Effects" [ref=e308] [cursor=pointer]:
+              - img
+            - button "Transitions" [ref=e309] [cursor=pointer]:
+              - img
+            - button "Captions" [ref=e310] [cursor=pointer]:
+              - img
+            - button "Adjustment" [ref=e311] [cursor=pointer]:
+              - img
+            - button "Settings" [ref=e312] [cursor=pointer]:
+              - img
+          - generic [ref=e314]:
+            - generic [ref=e315]:
+              - generic [ref=e316]: Assets
+              - generic [ref=e317]:
+                - button [ref=e318] [cursor=pointer]:
+                  - img
+                - button [ref=e319] [cursor=pointer]:
+                  - img
+                - button "Import" [ref=e320] [cursor=pointer]:
+                  - img
+                  - text: Import
+            - button "Drag and drop videos, photos, and audio files here" [ref=e323]:
+              - img [ref=e325]
+              - paragraph [ref=e329]: Drag and drop videos, photos, and audio files here
+        - separator [ref=e330]
+        - generic [ref=e333]:
+          - application "Preview canvas" [ref=e338]
+          - generic [ref=e339]:
+            - generic [ref=e340]:
+              - button "00:00:00:00" [ref=e341] [cursor=pointer]
+              - generic [ref=e342]: /
+              - generic [ref=e343]: 00:00:00:00
+            - button [ref=e344] [cursor=pointer]:
+              - img
+            - generic [ref=e345]:
+              - combobox [ref=e346] [cursor=pointer]:
+                - generic [ref=e347]: Fit
+                - img [ref=e348]
+              - button [ref=e350] [cursor=pointer]:
+                - img
+        - separator [ref=e351]
+        - generic [ref=e354]:
+          - img [ref=e355]
+          - generic [ref=e359]:
+            - paragraph [ref=e360]: It's empty here
+            - paragraph [ref=e361]: Click an element on the timeline to edit its properties
+      - separator [ref=e362]
+      - region "Timeline" [ref=e364]:
+        - generic [ref=e366]:
+          - generic [ref=e367]:
+            - button [ref=e368] [cursor=pointer]:
+              - img
+            - button [ref=e369] [cursor=pointer]:
+              - img
+            - button [ref=e370] [cursor=pointer]:
+              - img
+            - generic [ref=e371]:
+              - button [disabled]:
+                - img
+            - button [ref=e372] [cursor=pointer]:
+              - img
+            - generic [ref=e373]:
+              - button [disabled]:
+                - img
+            - button [ref=e374] [cursor=pointer]:
+              - img
+            - button [ref=e376] [cursor=pointer]:
+              - img
+            - generic [ref=e377]:
+              - button [disabled]:
+                - img
+          - generic [ref=e379]:
+            - button "Main scene" [ref=e380]:
+              - generic [ref=e381]: Main scene
+            - button [ref=e382] [cursor=pointer]:
+              - img
+          - generic [ref=e383]:
+            - button [ref=e384] [cursor=pointer]:
+              - img
+            - button [ref=e385] [cursor=pointer]:
+              - img
+            - generic [ref=e387]:
+              - button [ref=e388] [cursor=pointer]:
+                - img
+              - slider [ref=e392]
+              - button [ref=e393] [cursor=pointer]:
+                - img
+        - generic [ref=e394]:
+          - generic [ref=e401]:
+            - img [ref=e402] [cursor=pointer]
+            - img [ref=e406] [cursor=pointer]
+            - img "Video" [ref=e409]
+          - generic [ref=e412]:
+            - generic [ref=e414]:
+              - slider "Timeline ruler" [ref=e415]:
+                - generic [ref=e416]: 00:00
+                - generic [ref=e421]: 15f
+                - generic [ref=e426]: 00:01
+                - generic [ref=e431]: 15f
+                - generic [ref=e436]: 00:02
+                - generic [ref=e441]: 15f
+                - generic [ref=e446]: 00:03
+                - generic [ref=e451]: 15f
+                - generic [ref=e456]: 00:04
+              - button "Timeline ruler" [ref=e458]
+            - button "Select Main Track track" [ref=e464]
+            - slider "Timeline playhead":
+              - button "Drag playhead" [ref=e467]
+    - generic [ref=e468]:
+      - generic [ref=e470]:
+        - generic [ref=e471]:
+          - generic [ref=e472]:
+            - img [ref=e473]
+            - generic [ref=e476]: Asistente de edición
+          - button "Cerrar" [ref=e477] [cursor=pointer]:
+            - img
+        - generic [ref=e479]:
+          - img [ref=e480]
+          - paragraph [ref=e483]:
+            - text: Dame instrucciones en lenguaje natural.
+            - text: "Ej: \"agrega un texto al inicio\", \"corta los primeros 3 segundos\", \"añade música de fondo\"."
+        - generic [ref=e485]:
+          - textbox "Escribe una instrucción…" [active] [ref=e486]: linea unoprimera linea segunda linea linea dos linea tres
+          - button "Enviar" [ref=e487] [cursor=pointer]:
+            - img
+      - button "Asistente de edición IA" [ref=e469] [cursor=pointer]:
+        - img

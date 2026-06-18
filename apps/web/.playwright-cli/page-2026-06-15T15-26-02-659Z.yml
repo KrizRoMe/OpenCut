@@ -1,0 +1,161 @@
+- generic [active] [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e11] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e12]:
+      - img [ref=e13]
+    - generic [ref=e17]:
+      - button "Open issues overlay" [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: "0"
+          - generic [ref=e21]: "1"
+        - generic [ref=e22]: Issue
+      - button "Collapse issues badge" [ref=e23]:
+        - img [ref=e24]
+  - alert [ref=e16]
+  - generic [ref=e43]:
+    - banner [ref=e44]:
+      - generic [ref=e45]:
+        - button "Project thumbnail" [ref=e46] [cursor=pointer]:
+          - img "Project thumbnail" [ref=e47]
+        - textbox [ref=e48] [cursor=pointer]: Untitled Project
+      - navigation [ref=e49]:
+        - button "Send feedback" [ref=e50] [cursor=pointer]
+        - button "Export" [ref=e51] [cursor=pointer]:
+          - generic [ref=e52]:
+            - img [ref=e53]
+            - generic [ref=e57]: Export
+        - button "Dark" [ref=e60] [cursor=pointer]:
+          - img
+          - generic [ref=e61]: Dark
+    - generic [ref=e63]:
+      - generic [ref=e65]:
+        - generic [ref=e67]:
+          - generic [ref=e69]:
+            - button "Media" [ref=e70] [cursor=pointer]:
+              - img
+            - button "Sounds" [ref=e71] [cursor=pointer]:
+              - img
+            - button "Text" [ref=e72] [cursor=pointer]:
+              - img
+            - button "Stickers" [ref=e73] [cursor=pointer]:
+              - img
+            - button "Effects" [ref=e74] [cursor=pointer]:
+              - img
+            - button "Transitions" [ref=e75] [cursor=pointer]:
+              - img
+            - button "Captions" [ref=e76] [cursor=pointer]:
+              - img
+            - button "Adjustment" [ref=e77] [cursor=pointer]:
+              - img
+            - button "Settings" [ref=e78] [cursor=pointer]:
+              - img
+          - generic [ref=e80]:
+            - generic [ref=e81]:
+              - generic [ref=e82]: Assets
+              - generic [ref=e83]:
+                - button [ref=e84] [cursor=pointer]:
+                  - img
+                - button [ref=e85] [cursor=pointer]:
+                  - img
+                - button "Import" [ref=e86] [cursor=pointer]:
+                  - img
+                  - text: Import
+            - button "Drag and drop videos, photos, and audio files here" [ref=e89]:
+              - img [ref=e91]
+              - paragraph [ref=e95]: Drag and drop videos, photos, and audio files here
+        - separator [ref=e96]
+        - generic [ref=e99]:
+          - application "Preview canvas" [ref=e104]
+          - generic [ref=e105]:
+            - generic [ref=e106]:
+              - button "00:00:00:00" [ref=e107] [cursor=pointer]
+              - generic [ref=e108]: /
+              - generic [ref=e109]: 00:00:00:00
+            - button [ref=e110] [cursor=pointer]:
+              - img
+            - generic [ref=e111]:
+              - combobox [ref=e112] [cursor=pointer]:
+                - generic [ref=e113]: Fit
+                - img [ref=e114]
+              - button [ref=e116] [cursor=pointer]:
+                - img
+        - separator [ref=e117]
+        - generic [ref=e120]:
+          - img [ref=e121]
+          - generic [ref=e125]:
+            - paragraph [ref=e126]: It's empty here
+            - paragraph [ref=e127]: Click an element on the timeline to edit its properties
+      - separator [ref=e128]
+      - region "Timeline" [ref=e130]:
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - button [ref=e134] [cursor=pointer]:
+              - img
+            - button [ref=e135] [cursor=pointer]:
+              - img
+            - button [ref=e136] [cursor=pointer]:
+              - img
+            - generic [ref=e137]:
+              - button [disabled]:
+                - img
+            - button [ref=e138] [cursor=pointer]:
+              - img
+            - generic [ref=e139]:
+              - button [disabled]:
+                - img
+            - button [ref=e140] [cursor=pointer]:
+              - img
+            - button [ref=e142] [cursor=pointer]:
+              - img
+            - generic [ref=e143]:
+              - button [disabled]:
+                - img
+          - generic [ref=e145]:
+            - button "Main scene" [ref=e146]:
+              - generic [ref=e147]: Main scene
+            - button [ref=e148] [cursor=pointer]:
+              - img
+          - generic [ref=e149]:
+            - button [ref=e150] [cursor=pointer]:
+              - img
+            - button [ref=e151] [cursor=pointer]:
+              - img
+            - generic [ref=e153]:
+              - button [ref=e154] [cursor=pointer]:
+                - img
+              - slider [ref=e158]
+              - button [ref=e159] [cursor=pointer]:
+                - img
+        - generic [ref=e160]:
+          - generic [ref=e167]:
+            - img [ref=e168] [cursor=pointer]
+            - img [ref=e172] [cursor=pointer]
+            - img "Video" [ref=e175]
+          - generic [ref=e178]:
+            - generic [ref=e180]:
+              - slider "Timeline ruler" [ref=e181]:
+                - generic [ref=e182]: 00:00
+                - generic [ref=e187]: 15f
+                - generic [ref=e192]: 00:01
+                - generic [ref=e197]: 15f
+                - generic [ref=e202]: 00:02
+                - generic [ref=e207]: 15f
+                - generic [ref=e212]: 00:03
+                - generic [ref=e217]: 15f
+                - generic [ref=e222]: 00:04
+              - button "Timeline ruler" [ref=e224]
+            - button "Select Main Track track" [ref=e230]
+            - slider "Timeline playhead":
+              - button "Drag playhead" [ref=e233]
+    - generic [ref=e234]:
+      - generic [ref=e235]:
+        - generic [ref=e236]:
+          - generic [ref=e237]: Masks, animation & more
+          - generic [ref=e238]: v0.3.0
+        - button "Dismiss" [ref=e239] [cursor=pointer]:
+          - img
+      - paragraph [ref=e240]: Masks, graph editor for curves, volume & speed controls, preview zoom, canvas backgrounds, and stickers.
+      - link "See full changelog" [ref=e242] [cursor=pointer]:
+        - /url: /changelog
+    - button "Asistente de edición IA" [ref=e244] [cursor=pointer]:
+      - img

@@ -1,0 +1,186 @@
+- generic:
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e255] [cursor=pointer]:
+    - img [ref=e256]
+  - alert
+  - generic:
+    - banner:
+      - generic:
+        - button:
+          - img
+        - textbox: New project
+      - navigation:
+        - button: Send feedback
+        - button:
+          - generic:
+            - img
+            - generic: Export
+        - button:
+          - img
+          - generic: Dark
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - button:
+                      - img
+                    - button:
+                      - img
+                    - button:
+                      - img
+                    - button:
+                      - img
+                    - button:
+                      - img
+                    - button:
+                      - img
+                    - button:
+                      - img
+                    - button:
+                      - img
+                    - button:
+                      - img
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: Assets
+                      - generic:
+                        - button:
+                          - img
+                        - button:
+                          - img
+                        - button:
+                          - img
+                          - text: Import
+                    - generic:
+                      - generic:
+                        - button:
+                          - generic:
+                            - img
+                          - generic:
+                            - paragraph: Drag and drop videos, photos, and audio files here
+            - separator
+            - generic:
+              - generic:
+                - generic:
+                  - application [ref=e279]
+                  - generic:
+                    - generic:
+                      - button: 00:00:00:00
+                      - generic: /
+                      - generic: 00:00:00:00
+                    - button:
+                      - img
+                    - generic:
+                      - combobox:
+                        - generic: Fit
+                        - img
+                      - button:
+                        - img
+            - separator
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - generic:
+                    - paragraph: It's empty here
+                    - paragraph: Click an element on the timeline to edit its properties
+        - separator
+        - generic:
+          - region:
+            - generic:
+              - generic:
+                - generic:
+                  - button:
+                    - img
+                  - button:
+                    - img
+                  - button:
+                    - img
+                  - generic:
+                    - button [disabled]:
+                      - img
+                  - button:
+                    - img
+                  - generic:
+                    - button [disabled]:
+                      - img
+                  - button:
+                    - img
+                  - button:
+                    - img
+                  - generic:
+                    - button [disabled]:
+                      - img
+                - generic:
+                  - generic:
+                    - button:
+                      - generic: Main scene
+                    - button:
+                      - img
+                - generic:
+                  - button:
+                    - img
+                  - button:
+                    - img
+                  - generic:
+                    - button:
+                      - img
+                    - generic:
+                      - generic:
+                        - slider
+                    - button:
+                      - img
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - img
+                          - img
+                          - img
+              - generic:
+                - generic:
+                  - generic:
+                    - slider:
+                      - generic: 00:00
+                      - generic: 15f
+                      - generic: 00:01
+                      - generic: 15f
+                      - generic: 00:02
+                      - generic: 15f
+                      - generic: 00:03
+                      - generic: 15f
+                      - generic: 00:04
+                    - generic:
+                      - button
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - button
+                - slider:
+                  - button [ref=e280]
+    - generic:
+      - button:
+        - img
+  - dialog "Welcome to OpenCut Beta! 🎉" [ref=e282]:
+    - heading "Welcome to OpenCut Beta! 🎉" [level=2]:
+      - generic [ref=e283]: Welcome to OpenCut Beta! 🎉
+    - generic [ref=e285]:
+      - generic [ref=e286]:
+        - heading "Welcome to OpenCut Beta! 🎉" [level=2] [ref=e287]
+        - paragraph [ref=e289]: You're among the first to try OpenCut - the fully open source CapCut alternative.
+      - button "Next" [active] [ref=e290] [cursor=pointer]:
+        - text: Next
+        - img
+    - button "Close" [ref=e291] [cursor=pointer]:
+      - img [ref=e292]
+      - generic [ref=e295]: Close

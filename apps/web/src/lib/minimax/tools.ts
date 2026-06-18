@@ -30,8 +30,12 @@ More editing capabilities:
 - Remove an inner part: "elimina del segundo 5 al 8" => delete_segment (from=5, to=8). For trimming the ENDS use trim_clip.
 - Zoom / resize / rotate: "haz zoom", "agranda al 150%", "rota 90°", "muévelo" => set_transform (scale/zoom, rotate in degrees, positionX/Y). NOTE: there is no true edge-crop; approximate "recorta/encuadra" with set_transform (scale + position).
 - Fade: "fade in/out", "fundido", "que aparezca/desaparezca gradualmente" => fade (fadeIn/fadeOut in seconds; works on video, image, text opacity and on audio volume).
-- Restyle subtitles/text: update_text (color, fontFamily, bold, italic, underline, textAlign, fontSize).
-- Automatic subtitles: "pon subtítulos automáticos / transcribe / genera captions" => generate_subtitles (it transcribes the timeline audio with on-device speech-to-text and adds the caption clips; do NOT use add_text for this). Pass language only if the user states it.
+- Restyle ONE specific text/subtitle line: update_text (color, fontFamily, bold, italic, underline, textAlign, fontSize) by its elementId.
+- Text/subtitle background box ("ponle un fondo negro al texto", "una caja detrás del texto", "resalta los subtítulos con fondo", "esquinas redondeadas") => set backgroundColor (and optionally backgroundRadius) on add_text/update_text (one line) or style_subtitles (all). To remove it pass backgroundEnabled false. This is supported the same way the manual editor does it — do NOT say it's impossible.
+- Automatic subtitles: "pon subtítulos automáticos / transcribe / genera captions / añade subtítulos a mi audio X" => generate_subtitles (it transcribes the timeline audio with on-device speech-to-text and adds the caption clips; do NOT use add_text for this). Pass language when the user states it ("en español" => language "es", "in English" => "en"); omit for auto-detect. If the user names an imported asset ("a mi audio subtitle-example.mp3"), pass it as asset so it gets placed on the timeline and transcribed.
+- Per-source subtitles in different languages: "subtítulos del video en español y del audio en inglés" => TWO generate_subtitles calls — one with source "video" + language "es", another with source "audio" + language "en". They queue and run sequentially. Use the source field to subtitle only one clip; each source's captions are tagged so they can be removed independently. To re-do a source's subtitles in another language, remove_subtitles(source) first, then generate_subtitles(source, language).
+- Remove subtitles: "quita / elimina / borra los subtítulos / quita los captions" => remove_subtitles (omit source to remove ALL; pass source "video"/"audio" to remove only that source's captions).
+- Restyle ALL subtitles at once: "haz los subtítulos amarillos / más grandes / en negrita / cambia la fuente de los subtítulos" => style_subtitles (color, fontSize, bold, italic, underline, fontFamily, textAlign). Use this — NOT update_text — when the user means every subtitle.
 - Export subtitles: "exporta/descarga los subtítulos (SRT)" => export_subtitles.
 - Sound effects: "añade un efecto de explosión/whoosh/aplausos", "pon un sonido de X (en el segundo N / del N al M)" => add_sound_effect (query = the effect; timelineStart/to in seconds when the user gives them). This searches a sound library — do NOT use add_audio (that needs a URL) for effects.
 IMPORTANT: requests like "inserta el video 2 en el segundo N y que el video 1 continúe después" / "corta el primero y mete el segundo como continuación en una sola línea" are a SINGLE composite action: use insert_as_continuation (do NOT use split_clip or trim_clip for these). Pass atSeconds = the cut point.
@@ -64,6 +68,15 @@ export const SKILL_TOOLS: MinimaxTool[] = [
 					fontSize: { type: "number" },
 					color: { type: "string", description: "CSS color e.g. #ffffff" },
 					align: { type: "string", enum: ["left", "center", "right"] },
+					backgroundColor: {
+						type: "string",
+						description:
+							"CSS color for a background box behind the text (e.g. #000000 or rgba(0,0,0,0.5)); setting it shows the box.",
+					},
+					backgroundRadius: {
+						type: "number",
+						description: "Rounded-corner radius (px) for the background box.",
+					},
 				},
 				required: ["content"],
 			},
@@ -89,6 +102,20 @@ export const SKILL_TOOLS: MinimaxTool[] = [
 					underline: { type: "boolean" },
 					letterSpacing: { type: "number" },
 					lineHeight: { type: "number" },
+					backgroundColor: {
+						type: "string",
+						description:
+							"CSS color for a background box behind the text (e.g. #000000 or rgba(0,0,0,0.5)); setting it shows the box.",
+					},
+					backgroundEnabled: {
+						type: "boolean",
+						description:
+							"Show or hide the background box (false removes it without losing the color).",
+					},
+					backgroundRadius: {
+						type: "number",
+						description: "Rounded-corner radius (px) for the background box.",
+					},
 				},
 				required: ["elementId"],
 			},
@@ -458,13 +485,83 @@ export const SKILL_TOOLS: MinimaxTool[] = [
 		function: {
 			name: "generate_subtitles",
 			description:
-				"Automatically transcribe the timeline's audio (speech-to-text) and add subtitles as text clips. Use for 'pon subtítulos automáticos', 'transcribe el video', 'genera captions'. Optional language code (e.g. 'es', 'en'); omit for auto-detect.",
+				"Automatically transcribe the timeline's audio (speech-to-text) and add subtitles as text clips. Use for 'pon subtítulos automáticos', 'transcribe el video', 'genera captions', 'añade subtítulos a mi audio X'. Runs in the background; multiple calls queue and run one after another. Pass language when stated; pass asset (name/mediaId) when the user targets a specific imported clip/audio so it gets placed on the timeline first. Pass source to subtitle ONLY one clip (e.g. just the video, or just an audio track) — emit two calls with different source+language for 'el video en español y el audio en inglés'.",
 			parameters: {
 				type: "object",
 				properties: {
 					language: {
 						type: "string",
-						description: "Language code like 'es' or 'en'; omit to auto-detect",
+						description:
+							"Language code like 'es' or 'en' (or 'español'/'english'); omit to auto-detect",
+					},
+					asset: {
+						type: "string",
+						description:
+							"Name or mediaId of an imported audio/video asset to subtitle (e.g. 'subtitle-example.mp3'). Omit to transcribe whatever is already on the timeline.",
+					},
+					source: {
+						type: "string",
+						description:
+							"Restrict transcription to ONE source so its captions are tagged and independent: 'video', 'audio', an asset name, or an exact elementId. Omit to transcribe the whole mixed timeline.",
+					},
+				},
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "remove_subtitles",
+			description:
+				"Remove subtitles/captions from the timeline. Use for 'quita los subtítulos', 'elimina los captions', 'borra los subtítulos'. Pass source to remove only one source's captions (e.g. 'quita los subtítulos del video'); omit to remove ALL.",
+			parameters: {
+				type: "object",
+				properties: {
+					source: {
+						type: "string",
+						description:
+							"Remove only this source's captions: 'video', 'audio', an asset name, or an exact elementId. Omit to remove all subtitles.",
+					},
+				},
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "style_subtitles",
+			description:
+				"Restyle subtitles at once. Use for 'haz los subtítulos amarillos', 'súbele el tamaño a los subtítulos', 'ponlos en negrita', 'cambia la fuente de los subtítulos', 'ponle un fondo negro a los subtítulos'. For a single line use update_text instead. Pass source to restyle only one source's captions; omit for all.",
+			parameters: {
+				type: "object",
+				properties: {
+					color: { type: "string", description: "CSS color e.g. #ffff00" },
+					fontSize: { type: "number" },
+					fontFamily: { type: "string" },
+					textAlign: { type: "string", enum: ["left", "center", "right"] },
+					bold: { type: "boolean" },
+					italic: { type: "boolean" },
+					underline: { type: "boolean" },
+					letterSpacing: { type: "number" },
+					lineHeight: { type: "number" },
+					backgroundColor: {
+						type: "string",
+						description:
+							"CSS color for a background box behind each caption (e.g. #000000 or rgba(0,0,0,0.6)); setting it shows the box.",
+					},
+					backgroundEnabled: {
+						type: "boolean",
+						description:
+							"Show or hide the background box on all subtitles (false removes it).",
+					},
+					backgroundRadius: {
+						type: "number",
+						description: "Rounded-corner radius (px) for the background box.",
+					},
+					source: {
+						type: "string",
+						description:
+							"Restyle only this source's captions: 'video', 'audio', an asset name, or an exact elementId. Omit for all subtitles.",
 					},
 				},
 			},

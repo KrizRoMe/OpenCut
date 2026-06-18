@@ -1,0 +1,152 @@
+- generic [ref=e10]:
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e6] [cursor=pointer]:
+    - img [ref=e7]
+  - alert [ref=e11]
+  - generic [ref=e12]:
+    - banner [ref=e13]:
+      - generic [ref=e14]:
+        - button "Project thumbnail" [ref=e15] [cursor=pointer]:
+          - img "Project thumbnail" [ref=e16]
+        - textbox [ref=e17] [cursor=pointer]: New project
+      - navigation [ref=e18]:
+        - button "Send feedback" [ref=e19] [cursor=pointer]
+        - button "Export" [ref=e20] [cursor=pointer]:
+          - generic [ref=e21]:
+            - img [ref=e22]
+            - generic [ref=e26]: Export
+        - button "Dark" [ref=e29] [cursor=pointer]:
+          - img
+          - generic [ref=e30]: Dark
+    - generic [ref=e32]:
+      - generic [ref=e34]:
+        - generic [ref=e36]:
+          - generic [ref=e38]:
+            - button "Media" [ref=e39] [cursor=pointer]:
+              - img
+            - button "Sounds" [ref=e40] [cursor=pointer]:
+              - img
+            - button "Text" [ref=e41] [cursor=pointer]:
+              - img
+            - button "Stickers" [ref=e42] [cursor=pointer]:
+              - img
+            - button "Effects" [ref=e43] [cursor=pointer]:
+              - img
+            - button "Transitions" [ref=e44] [cursor=pointer]:
+              - img
+            - button "Captions" [ref=e45] [cursor=pointer]:
+              - img
+            - button "Adjustment" [ref=e46] [cursor=pointer]:
+              - img
+            - button "Settings" [ref=e47] [cursor=pointer]:
+              - img
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - generic [ref=e51]: Assets
+              - generic [ref=e52]:
+                - button [ref=e53] [cursor=pointer]:
+                  - img
+                - button [ref=e54] [cursor=pointer]:
+                  - img
+                - button "Import" [ref=e55] [cursor=pointer]:
+                  - img
+                  - text: Import
+            - button "Drag and drop videos, photos, and audio files here" [ref=e58]:
+              - img [ref=e60]
+              - paragraph [ref=e64]: Drag and drop videos, photos, and audio files here
+        - separator [ref=e65]
+        - generic [ref=e68]:
+          - application "Preview canvas" [ref=e73]
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - button "00:00:02:00" [ref=e239] [cursor=pointer]
+              - generic [ref=e77]: /
+              - generic [ref=e78]: 00:00:08:00
+            - button [active] [ref=e79] [cursor=pointer]:
+              - img
+            - generic [ref=e80]:
+              - combobox [ref=e81] [cursor=pointer]:
+                - generic [ref=e82]: Fit
+                - img [ref=e83]
+              - button [ref=e85] [cursor=pointer]:
+                - img
+        - separator [ref=e86]
+        - generic [ref=e89]:
+          - img [ref=e90]
+          - generic [ref=e94]:
+            - paragraph [ref=e95]: It's empty here
+            - paragraph [ref=e96]: Click an element on the timeline to edit its properties
+      - separator [ref=e97]
+      - region "Timeline" [ref=e99]:
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - button [ref=e103] [cursor=pointer]:
+              - img
+            - button [ref=e104] [cursor=pointer]:
+              - img
+            - button [ref=e105] [cursor=pointer]:
+              - img
+            - generic [ref=e106]:
+              - button [disabled]:
+                - img
+            - button [ref=e107] [cursor=pointer]:
+              - img
+            - generic [ref=e108]:
+              - button [disabled]:
+                - img
+            - button [ref=e109] [cursor=pointer]:
+              - img
+            - button [ref=e111] [cursor=pointer]:
+              - img
+            - generic [ref=e112]:
+              - button [disabled]:
+                - img
+          - generic [ref=e114]:
+            - button "Main scene" [ref=e115]:
+              - generic [ref=e116]: Main scene
+            - button [ref=e117] [cursor=pointer]:
+              - img
+          - generic [ref=e118]:
+            - button [ref=e119] [cursor=pointer]:
+              - img
+            - button [ref=e120] [cursor=pointer]:
+              - img
+            - generic [ref=e122]:
+              - button [ref=e123] [cursor=pointer]:
+                - img
+              - slider [ref=e128]
+              - button [ref=e129] [cursor=pointer]:
+                - img
+        - generic [ref=e130]:
+          - generic [ref=e135]:
+            - generic [ref=e137]:
+              - img [ref=e138] [cursor=pointer]
+              - img [ref=e142] [cursor=pointer]
+              - img "Video" [ref=e145]
+            - generic [ref=e149]:
+              - img [ref=e150] [cursor=pointer]
+              - img [ref=e154]
+          - generic [ref=e160]:
+            - generic [ref=e162]:
+              - slider "Timeline ruler" [ref=e163]:
+                - generic [ref=e164]: 00:00
+                - generic [ref=e169]: 15f
+                - generic [ref=e174]: 00:01
+                - generic [ref=e179]: 15f
+                - generic [ref=e184]: 00:02
+                - generic [ref=e189]: 15f
+                - generic [ref=e194]: 00:03
+                - generic [ref=e199]: 15f
+                - generic [ref=e204]: 00:04
+                - generic [ref=e209]: 15f
+              - button "Timeline ruler" [ref=e214]
+            - generic [ref=e217]:
+              - button "Select Main Track track" [ref=e220]
+              - generic [ref=e223]:
+                - button "Select Audio track track" [ref=e224]
+                - button "CinematicBoomNorm.wav" [ref=e230]:
+                  - generic [ref=e234]: CinematicBoomNorm.wav
+            - slider "Timeline playhead":
+              - button "Drag playhead" [ref=e236]
+    - button "Asistente de edición IA" [ref=e238] [cursor=pointer]:
+      - img

@@ -10,9 +10,12 @@ import type { SubtitleCue } from "./types";
 export function insertCaptionChunksAsTextTrack({
 	editor,
 	captions,
+	sourceLabel,
 }: {
 	editor: EditorCore;
 	captions: SubtitleCue[];
+	// Optional source tag forwarded to each caption's name (see builder).
+	sourceLabel?: string;
 }): string | null {
 	if (captions.length === 0) {
 		return null;
@@ -29,6 +32,7 @@ export function insertCaptionChunksAsTextTrack({
 					index,
 					caption,
 					canvasSize,
+					sourceLabel,
 				}),
 			}),
 	);

@@ -8,19 +8,14 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useReducer, useRef, useState } from "react";
-import { extractTimelineAudio } from "@/lib/media/mediabunny";
 import { useEditor } from "@/hooks/use-editor";
 import { TRANSCRIPTION_DIAGNOSTICS_SCOPE } from "@/lib/transcription/diagnostics";
-import { DEFAULT_TRANSCRIPTION_SAMPLE_RATE } from "@/lib/transcription/audio";
 import { TRANSCRIPTION_LANGUAGES } from "@/lib/transcription/supported-languages";
 import type {
 	CaptionChunk,
 	TranscriptionLanguage,
-	TranscriptionProgress,
 } from "@/lib/transcription/types";
-import { transcriptionService } from "@/services/transcription/service";
-import { decodeAudioToFloat32 } from "@/lib/media/audio";
-import { buildCaptionChunks } from "@/lib/transcription/caption";
+import { useTranscriptionJobsStore } from "@/stores/transcription-jobs-store";
 import { insertCaptionChunksAsTextTrack } from "@/lib/subtitles/insert";
 import { parseSubtitleFile } from "@/lib/subtitles/parse";
 import { Spinner } from "@/components/ui/spinner";
@@ -91,20 +86,19 @@ export function Captions() {
 
 	const isProcessing = processing.status === "processing";
 
+	const job = useTranscriptionJobsStore((s) => s.job);
+	const startTranscription = useTranscriptionJobsStore(
+		(s) => s.startTranscription,
+	);
+	const isTranscribing =
+		job != null &&
+		job.status !== "done" &&
+		job.status !== "error" &&
+		job.status !== "cancelled";
+
 	const activeDiagnostics = useEditor((e) =>
 		e.diagnostics.getActive({ scope: TRANSCRIPTION_DIAGNOSTICS_SCOPE }),
 	);
-
-	const handleProgress = (progress: TranscriptionProgress) => {
-		if (progress.status === "loading-model") {
-			dispatch({
-				type: "update_step",
-				step: `Loading model ${Math.round(progress.progress)}%`,
-			});
-		} else if (progress.status === "transcribing") {
-			dispatch({ type: "update_step", step: "Transcribing..." });
-		}
-	};
 
 	const insertCaptions = ({
 		captions,
@@ -115,44 +109,17 @@ export function Captions() {
 		return trackId !== null;
 	};
 
-	const handleGenerateTranscript = async () => {
-		dispatch({ type: "start", step: "Extracting audio..." });
-		try {
-			const audioBlob = await extractTimelineAudio({
-				tracks: editor.scenes.getActiveScene().tracks,
-				mediaAssets: editor.media.getAssets(),
-				totalDuration: editor.timeline.getTotalDuration(),
-			});
-
-			dispatch({ type: "update_step", step: "Preparing audio..." });
-			const { samples } = await decodeAudioToFloat32({
-				audioBlob,
-				sampleRate: DEFAULT_TRANSCRIPTION_SAMPLE_RATE,
-			});
-
-			const result = await transcriptionService.transcribe({
-				audioData: samples,
-				language: selectedLanguage === "auto" ? undefined : selectedLanguage,
-				onProgress: handleProgress,
-			});
-
-			dispatch({ type: "update_step", step: "Generating captions..." });
-			const captionChunks = buildCaptionChunks({ segments: result.segments });
-
-			if (!insertCaptions({ captions: captionChunks })) {
-				dispatch({ type: "fail", error: "No captions were generated" });
-				return;
-			}
-
-			dispatch({ type: "succeed", warnings: [] });
-		} catch (error) {
-			console.error("Transcription failed:", error);
+	// Non-blocking: kick off the background job and return. Progress + completion
+	// surface via a global toast (driven by the jobs store); the captions are
+	// inserted into the timeline when the job finishes.
+	const handleGenerateTranscript = () => {
+		const { started, reason } = startTranscription({
+			language: selectedLanguage,
+		});
+		if (!started) {
 			dispatch({
 				type: "fail",
-				error:
-					error instanceof Error
-						? error.message
-						: "An unexpected error occurred",
+				error: reason ?? "Could not start transcription",
 			});
 		}
 	};
@@ -254,9 +221,7 @@ export function Captions() {
 											<HugeiconsIcon icon={AlertCircleIcon} size={16} />
 										</Button>
 									</TooltipTrigger>
-									<TooltipContent>
-										{diagnostic.message}
-									</TooltipContent>
+									<TooltipContent>{diagnostic.message}</TooltipContent>
 								</Tooltip>
 							))}
 						<Button
@@ -264,7 +229,7 @@ export function Captions() {
 							variant="outline"
 							size="sm"
 							onClick={handleImportClick}
-							disabled={isProcessing}
+							disabled={isProcessing || isTranscribing}
 							className="items-center justify-center gap-1.5"
 						>
 							<HugeiconsIcon icon={CloudUploadIcon} />
@@ -313,10 +278,16 @@ export function Captions() {
 						type="button"
 						className="mt-auto w-full"
 						onClick={handleGenerateTranscript}
-						disabled={isProcessing || activeDiagnostics.length > 0}
+						disabled={
+							isProcessing || isTranscribing || activeDiagnostics.length > 0
+						}
 					>
-						{isProcessing && <Spinner className="mr-1" />}
-						{isProcessing ? processing.step : "Generate transcript"}
+						{(isProcessing || isTranscribing) && <Spinner className="mr-1" />}
+						{isTranscribing
+							? (job?.step ?? "Transcribing…")
+							: isProcessing
+								? processing.step
+								: "Generate transcript"}
 					</Button>
 					{error && (
 						<div className="bg-destructive/10 border-destructive/20 rounded-md border p-3">

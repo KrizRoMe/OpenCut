@@ -7,6 +7,7 @@ import { cn } from "@/utils/ui";
 import { getEditorSnapshot } from "@/lib/skill/state";
 import { executeSkillAction } from "@/lib/skill/executor";
 import type { SkillActionName } from "@/lib/skill/types";
+import { useTranscriptionJobsStore } from "@/stores/transcription-jobs-store";
 
 interface ChatMessage {
 	id: string;
@@ -26,6 +27,35 @@ export function AiChat() {
 	const [loading, setLoading] = useState(false);
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+	// Background subtitle jobs are fire-and-forget, so the assistant promises to
+	// "avisar" — this delivers that follow-up message in the chat when the job
+	// finishes (deduped per job id; only if the chat has been used).
+	const transcriptionJob = useTranscriptionJobsStore((s) => s.job);
+	const notifiedJobRef = useRef<string | null>(null);
+	useEffect(() => {
+		const job = transcriptionJob;
+		if (!job) return;
+		if (job.status !== "done" && job.status !== "error") return;
+		if (notifiedJobRef.current === job.id) return;
+		notifiedJobRef.current = job.id;
+		setMessages((m) => {
+			if (m.length === 0) return m;
+			const content =
+				job.status === "done"
+					? `✅ Subtítulos listos: ${job.lineCount} línea${job.lineCount === 1 ? "" : "s"} añadida${job.lineCount === 1 ? "" : "s"} al timeline.`
+					: `⚠️ No pude generar los subtítulos: ${job.error ?? "error desconocido"}.`;
+			return [
+				...m,
+				{
+					id: uid(),
+					role: "assistant",
+					content,
+					error: job.status === "error",
+				},
+			];
+		});
+	}, [transcriptionJob]);
 
 	useEffect(() => {
 		scrollRef.current?.scrollTo({

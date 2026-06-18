@@ -1,0 +1,708 @@
+- generic [ref=e1]:
+  - region "Notifications alt+T"
+  - generic [ref=e11] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e12]:
+      - img [ref=e13]
+    - generic [ref=e17]:
+      - button "Open issues overlay" [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: "0"
+          - generic [ref=e21]: "1"
+        - generic [ref=e22]: Issue
+      - button "Collapse issues badge" [ref=e23]:
+        - img [ref=e24]
+  - alert [ref=e16]
+  - generic [ref=e43]:
+    - banner [ref=e44]:
+      - generic [ref=e45]:
+        - button "Project thumbnail" [ref=e46] [cursor=pointer]:
+          - img "Project thumbnail" [ref=e47]
+        - textbox [ref=e48] [cursor=pointer]: Untitled Project
+      - navigation [ref=e49]:
+        - button "Send feedback" [ref=e50] [cursor=pointer]
+        - button "Export" [ref=e51] [cursor=pointer]:
+          - generic [ref=e52]:
+            - img [ref=e53]
+            - generic [ref=e57]: Export
+        - button "Dark" [ref=e60] [cursor=pointer]:
+          - img
+          - generic [ref=e61]: Dark
+    - generic [ref=e63]:
+      - generic [ref=e65]:
+        - generic [ref=e67]:
+          - generic [ref=e69]:
+            - button "Media" [ref=e70] [cursor=pointer]:
+              - img
+            - button "Sounds" [active] [ref=e71] [cursor=pointer]:
+              - img
+            - button "Text" [ref=e72] [cursor=pointer]:
+              - img
+            - button "Stickers" [ref=e73] [cursor=pointer]:
+              - img
+            - button "Effects" [ref=e74] [cursor=pointer]:
+              - img
+            - button "Transitions" [ref=e75] [cursor=pointer]:
+              - img
+            - button "Captions" [ref=e76] [cursor=pointer]:
+              - img
+            - button "Adjustment" [ref=e77] [cursor=pointer]:
+              - img
+            - button "Settings" [ref=e78] [cursor=pointer]:
+              - img
+          - generic [ref=e246]:
+            - tablist [ref=e248]:
+              - tab "Sound effects" [selected] [ref=e249] [cursor=pointer]
+              - tab "Saved" [ref=e250] [cursor=pointer]
+            - tabpanel "Sound effects" [ref=e251]:
+              - generic [ref=e252]:
+                - generic [ref=e253]:
+                  - textbox "Search sound effects" [ref=e255]
+                  - button [ref=e256] [cursor=pointer]:
+                    - img
+                - generic [ref=e259]:
+                  - generic [ref=e260]:
+                    - button "Whoosh qubodup" [ref=e261]:
+                      - img [ref=e264]
+                      - generic [ref=e266]:
+                        - paragraph [ref=e267]: Whoosh
+                        - generic [ref=e268]: qubodup
+                    - generic [ref=e269]:
+                      - button "Add to timeline" [ref=e270] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e271] [cursor=pointer]:
+                        - img
+                  - generic [ref=e272]:
+                    - button "rbh thunder storm.wav RHumphries" [ref=e273]:
+                      - img [ref=e276]
+                      - generic [ref=e278]:
+                        - paragraph [ref=e279]: rbh thunder storm.wav
+                        - generic [ref=e280]: RHumphries
+                    - generic [ref=e281]:
+                      - button "Add to timeline" [ref=e282] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e283] [cursor=pointer]:
+                        - img
+                  - generic [ref=e284]:
+                    - button "CinematicBoomNorm.wav HerbertBoland" [ref=e285]:
+                      - img [ref=e288]
+                      - generic [ref=e290]:
+                        - paragraph [ref=e291]: CinematicBoomNorm.wav
+                        - generic [ref=e292]: HerbertBoland
+                    - generic [ref=e293]:
+                      - button "Add to timeline" [ref=e294] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e295] [cursor=pointer]:
+                        - img
+                  - generic [ref=e296]:
+                    - button "Explosion_01.wav tommccann" [ref=e297]:
+                      - img [ref=e300]
+                      - generic [ref=e302]:
+                        - paragraph [ref=e303]: Explosion_01.wav
+                        - generic [ref=e304]: tommccann
+                    - generic [ref=e305]:
+                      - button "Add to timeline" [ref=e306] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e307] [cursor=pointer]:
+                        - img
+                  - generic [ref=e308]:
+                    - button "Explosion Iwiploppenisse" [ref=e309]:
+                      - img [ref=e312]
+                      - generic [ref=e314]:
+                        - paragraph [ref=e315]: Explosion
+                        - generic [ref=e316]: Iwiploppenisse
+                    - generic [ref=e317]:
+                      - button "Add to timeline" [ref=e318] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e319] [cursor=pointer]:
+                        - img
+                  - generic [ref=e320]:
+                    - button "grenade.wav ljudman" [ref=e321]:
+                      - img [ref=e324]
+                      - generic [ref=e326]:
+                        - paragraph [ref=e327]: grenade.wav
+                        - generic [ref=e328]: ljudman
+                    - generic [ref=e329]:
+                      - button "Add to timeline" [ref=e330] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e331] [cursor=pointer]:
+                        - img
+                  - generic [ref=e332]:
+                    - button "oceanwavescrushing.wav Luftrum" [ref=e333]:
+                      - img [ref=e336]
+                      - generic [ref=e338]:
+                        - paragraph [ref=e339]: oceanwavescrushing.wav
+                        - generic [ref=e340]: Luftrum
+                    - generic [ref=e341]:
+                      - button "Add to timeline" [ref=e342] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e343] [cursor=pointer]:
+                        - img
+                  - generic [ref=e344]:
+                    - button "Soft Wind florianreichelt" [ref=e345]:
+                      - img [ref=e348]
+                      - generic [ref=e350]:
+                        - paragraph [ref=e351]: Soft Wind
+                        - generic [ref=e352]: florianreichelt
+                    - generic [ref=e353]:
+                      - button "Add to timeline" [ref=e354] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e355] [cursor=pointer]:
+                        - img
+                  - generic [ref=e356]:
+                    - button "ambience03.wav yewbic" [ref=e357]:
+                      - img [ref=e360]
+                      - generic [ref=e362]:
+                        - paragraph [ref=e363]: ambience03.wav
+                        - generic [ref=e364]: yewbic
+                    - generic [ref=e365]:
+                      - button "Add to timeline" [ref=e366] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e367] [cursor=pointer]:
+                        - img
+                  - generic [ref=e368]:
+                    - button "evening in the forest.wav reinsamba" [ref=e369]:
+                      - img [ref=e372]
+                      - generic [ref=e374]:
+                        - paragraph [ref=e375]: evening in the forest.wav
+                        - generic [ref=e376]: reinsamba
+                    - generic [ref=e377]:
+                      - button "Add to timeline" [ref=e378] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e379] [cursor=pointer]:
+                        - img
+                  - generic [ref=e380]:
+                    - button "Coins 1 AceOfSpadesProduc100" [ref=e381]:
+                      - img [ref=e384]
+                      - generic [ref=e386]:
+                        - paragraph [ref=e387]: Coins 1
+                        - generic [ref=e388]: AceOfSpadesProduc100
+                    - generic [ref=e389]:
+                      - button "Add to timeline" [ref=e390] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e391] [cursor=pointer]:
+                        - img
+                  - generic [ref=e392]:
+                    - button "Ambience, Night Wildlife, A.wav InspectorJ" [ref=e393]:
+                      - img [ref=e396]
+                      - generic [ref=e398]:
+                        - paragraph [ref=e399]: Ambience, Night Wildlife, A.wav
+                        - generic [ref=e400]: InspectorJ
+                    - generic [ref=e401]:
+                      - button "Add to timeline" [ref=e402] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e403] [cursor=pointer]:
+                        - img
+                  - generic [ref=e404]:
+                    - button "Keyboard Typing Trollarch2" [ref=e405]:
+                      - img [ref=e408]
+                      - generic [ref=e410]:
+                        - paragraph [ref=e411]: Keyboard Typing
+                        - generic [ref=e412]: Trollarch2
+                    - generic [ref=e413]:
+                      - button "Add to timeline" [ref=e414] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e415] [cursor=pointer]:
+                        - img
+                  - generic [ref=e416]:
+                    - button "Spring Birds Raw (New Jersey) hargissssound" [ref=e417]:
+                      - img [ref=e420]
+                      - generic [ref=e422]:
+                        - paragraph [ref=e423]: Spring Birds Raw (New Jersey)
+                        - generic [ref=e424]: hargissssound
+                    - generic [ref=e425]:
+                      - button "Add to timeline" [ref=e426] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e427] [cursor=pointer]:
+                        - img
+                  - generic [ref=e428]:
+                    - button "swosh.aif man" [ref=e429]:
+                      - img [ref=e432]
+                      - generic [ref=e434]:
+                        - paragraph [ref=e435]: swosh.aif
+                        - generic [ref=e436]: man
+                    - generic [ref=e437]:
+                      - button "Add to timeline" [ref=e438] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e439] [cursor=pointer]:
+                        - img
+                  - generic [ref=e440]:
+                    - button "Wind Through Trees 3b spoonbender" [ref=e441]:
+                      - img [ref=e444]
+                      - generic [ref=e446]:
+                        - paragraph [ref=e447]: Wind Through Trees 3b
+                        - generic [ref=e448]: spoonbender
+                    - generic [ref=e449]:
+                      - button "Add to timeline" [ref=e450] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e451] [cursor=pointer]:
+                        - img
+                  - generic [ref=e452]:
+                    - button "Ding Ding Small Bell JohnsonBrandEditing" [ref=e453]:
+                      - img [ref=e456]
+                      - generic [ref=e458]:
+                        - paragraph [ref=e459]: Ding Ding Small Bell
+                        - generic [ref=e460]: JohnsonBrandEditing
+                    - generic [ref=e461]:
+                      - button "Add to timeline" [ref=e462] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e463] [cursor=pointer]:
+                        - img
+                  - generic [ref=e464]:
+                    - button "swosh-22.flac qubodup" [ref=e465]:
+                      - img [ref=e468]
+                      - generic [ref=e470]:
+                        - paragraph [ref=e471]: swosh-22.flac
+                        - generic [ref=e472]: qubodup
+                    - generic [ref=e473]:
+                      - button "Add to timeline" [ref=e474] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e475] [cursor=pointer]:
+                        - img
+                  - generic [ref=e476]:
+                    - button "horror ambience 10.wav klankbeeld" [ref=e477]:
+                      - img [ref=e480]
+                      - generic [ref=e482]:
+                        - paragraph [ref=e483]: horror ambience 10.wav
+                        - generic [ref=e484]: klankbeeld
+                    - generic [ref=e485]:
+                      - button "Add to timeline" [ref=e486] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e487] [cursor=pointer]:
+                        - img
+                  - generic [ref=e488]:
+                    - button "Walking on pavement.wav JohnsonBrandEditing" [ref=e489]:
+                      - img [ref=e492]
+                      - generic [ref=e494]:
+                        - paragraph [ref=e495]: Walking on pavement.wav
+                        - generic [ref=e496]: JohnsonBrandEditing
+                    - generic [ref=e497]:
+                      - button "Add to timeline" [ref=e498] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e499] [cursor=pointer]:
+                        - img
+                  - generic [ref=e500]:
+                    - button "Big waves hit land.wav straget" [ref=e501]:
+                      - img [ref=e504]
+                      - generic [ref=e506]:
+                        - paragraph [ref=e507]: Big waves hit land.wav
+                        - generic [ref=e508]: straget
+                    - generic [ref=e509]:
+                      - button "Add to timeline" [ref=e510] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e511] [cursor=pointer]:
+                        - img
+                  - generic [ref=e512]:
+                    - button "Radio Static GowlerMusic" [ref=e513]:
+                      - img [ref=e516]
+                      - generic [ref=e518]:
+                        - paragraph [ref=e519]: Radio Static
+                        - generic [ref=e520]: GowlerMusic
+                    - generic [ref=e521]:
+                      - button "Add to timeline" [ref=e522] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e523] [cursor=pointer]:
+                        - img
+                  - generic [ref=e524]:
+                    - button "Light woosh.wav sophiehall3535" [ref=e525]:
+                      - img [ref=e528]
+                      - generic [ref=e530]:
+                        - paragraph [ref=e531]: Light woosh.wav
+                        - generic [ref=e532]: sophiehall3535
+                    - generic [ref=e533]:
+                      - button "Add to timeline" [ref=e534] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e535] [cursor=pointer]:
+                        - img
+                  - generic [ref=e536]:
+                    - button "Explosion / Mega thunder Erdie" [ref=e537]:
+                      - img [ref=e540]
+                      - generic [ref=e542]:
+                        - paragraph [ref=e543]: Explosion / Mega thunder
+                        - generic [ref=e544]: Erdie
+                    - generic [ref=e545]:
+                      - button "Add to timeline" [ref=e546] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e547] [cursor=pointer]:
+                        - img
+                  - generic [ref=e548]:
+                    - button "cinematic deep bass rumble.wav ERH" [ref=e549]:
+                      - img [ref=e552]
+                      - generic [ref=e554]:
+                        - paragraph [ref=e555]: cinematic deep bass rumble.wav
+                        - generic [ref=e556]: ERH
+                    - generic [ref=e557]:
+                      - button "Add to timeline" [ref=e558] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e559] [cursor=pointer]:
+                        - img
+                  - generic [ref=e560]:
+                    - button "suonho_ScaryScape_01.wav suonho" [ref=e561]:
+                      - img [ref=e564]
+                      - generic [ref=e566]:
+                        - paragraph [ref=e567]: suonho_ScaryScape_01.wav
+                        - generic [ref=e568]: suonho
+                    - generic [ref=e569]:
+                      - button "Add to timeline" [ref=e570] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e571] [cursor=pointer]:
+                        - img
+                  - generic [ref=e572]:
+                    - button "USAT BOMB.wav sandyrb" [ref=e573]:
+                      - img [ref=e576]
+                      - generic [ref=e578]:
+                        - paragraph [ref=e579]: USAT BOMB.wav
+                        - generic [ref=e580]: sandyrb
+                    - generic [ref=e581]:
+                      - button "Add to timeline" [ref=e582] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e583] [cursor=pointer]:
+                        - img
+                  - generic [ref=e584]:
+                    - button "Boom Bang bareform" [ref=e585]:
+                      - img [ref=e588]
+                      - generic [ref=e590]:
+                        - paragraph [ref=e591]: Boom Bang
+                        - generic [ref=e592]: bareform
+                    - generic [ref=e593]:
+                      - button "Add to timeline" [ref=e594] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e595] [cursor=pointer]:
+                        - img
+                  - generic [ref=e596]:
+                    - button "alarm clock short.wav ZyryTSounds" [ref=e597]:
+                      - img [ref=e600]
+                      - generic [ref=e602]:
+                        - paragraph [ref=e603]: alarm clock short.wav
+                        - generic [ref=e604]: ZyryTSounds
+                    - generic [ref=e605]:
+                      - button "Add to timeline" [ref=e606] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e607] [cursor=pointer]:
+                        - img
+                  - generic [ref=e608]:
+                    - button "THE CRASH.wav sandyrb" [ref=e609]:
+                      - img [ref=e612]
+                      - generic [ref=e614]:
+                        - paragraph [ref=e615]: THE CRASH.wav
+                        - generic [ref=e616]: sandyrb
+                    - generic [ref=e617]:
+                      - button "Add to timeline" [ref=e618] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e619] [cursor=pointer]:
+                        - img
+                  - generic [ref=e620]:
+                    - button "Dark Ambience PatrickLieberkind" [ref=e621]:
+                      - img [ref=e624]
+                      - generic [ref=e626]:
+                        - paragraph [ref=e627]: Dark Ambience
+                        - generic [ref=e628]: PatrickLieberkind
+                    - generic [ref=e629]:
+                      - button "Add to timeline" [ref=e630] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e631] [cursor=pointer]:
+                        - img
+                  - generic [ref=e632]:
+                    - button "MemoryMoon_space-blaster-plays.wav suonho" [ref=e633]:
+                      - img [ref=e636]
+                      - generic [ref=e638]:
+                        - paragraph [ref=e639]: MemoryMoon_space-blaster-plays.wav
+                        - generic [ref=e640]: suonho
+                    - generic [ref=e641]:
+                      - button "Add to timeline" [ref=e642] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e643] [cursor=pointer]:
+                        - img
+                  - generic [ref=e644]:
+                    - button "ambience02.wav yewbic" [ref=e645]:
+                      - img [ref=e648]
+                      - generic [ref=e650]:
+                        - paragraph [ref=e651]: ambience02.wav
+                        - generic [ref=e652]: yewbic
+                    - generic [ref=e653]:
+                      - button "Add to timeline" [ref=e654] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e655] [cursor=pointer]:
+                        - img
+                  - generic [ref=e656]:
+                    - button "woosh_02.wav Glaneur de sons" [ref=e657]:
+                      - img [ref=e660]
+                      - generic [ref=e662]:
+                        - paragraph [ref=e663]: woosh_02.wav
+                        - generic [ref=e664]: Glaneur de sons
+                    - generic [ref=e665]:
+                      - button "Add to timeline" [ref=e666] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e667] [cursor=pointer]:
+                        - img
+                  - generic [ref=e668]:
+                    - button "20060824.forest03.wav dobroide" [ref=e669]:
+                      - img [ref=e672]
+                      - generic [ref=e674]:
+                        - paragraph [ref=e675]: 20060824.forest03.wav
+                        - generic [ref=e676]: dobroide
+                    - generic [ref=e677]:
+                      - button "Add to timeline" [ref=e678] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e679] [cursor=pointer]:
+                        - img
+                  - generic [ref=e680]:
+                    - button "Birds In Spring (Scotland) BurghRecords" [ref=e681]:
+                      - img [ref=e684]
+                      - generic [ref=e686]:
+                        - paragraph [ref=e687]: Birds In Spring (Scotland)
+                        - generic [ref=e688]: BurghRecords
+                    - generic [ref=e689]:
+                      - button "Add to timeline" [ref=e690] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e691] [cursor=pointer]:
+                        - img
+                  - generic [ref=e692]:
+                    - button "crash.wav moxobna" [ref=e693]:
+                      - img [ref=e696]
+                      - generic [ref=e698]:
+                        - paragraph [ref=e699]: crash.wav
+                        - generic [ref=e700]: moxobna
+                    - generic [ref=e701]:
+                      - button "Add to timeline" [ref=e702] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e703] [cursor=pointer]:
+                        - img
+                  - generic [ref=e704]:
+                    - button "Heavy Thunder Strike - no Rain - QUADRO.wav BlueDelta" [ref=e705]:
+                      - img [ref=e708]
+                      - generic [ref=e710]:
+                        - paragraph [ref=e711]: Heavy Thunder Strike - no Rain - QUADRO.wav
+                        - generic [ref=e712]: BlueDelta
+                    - generic [ref=e713]:
+                      - button "Add to timeline" [ref=e714] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e715] [cursor=pointer]:
+                        - img
+                  - generic [ref=e716]:
+                    - button "pigeon wings.aif tigersound" [ref=e717]:
+                      - img [ref=e720]
+                      - generic [ref=e722]:
+                        - paragraph [ref=e723]: pigeon wings.aif
+                        - generic [ref=e724]: tigersound
+                    - generic [ref=e725]:
+                      - button "Add to timeline" [ref=e726] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e727] [cursor=pointer]:
+                        - img
+                  - generic [ref=e728]:
+                    - button "Explosion_001.mp3 cydon" [ref=e729]:
+                      - img [ref=e732]
+                      - generic [ref=e734]:
+                        - paragraph [ref=e735]: Explosion_001.mp3
+                        - generic [ref=e736]: cydon
+                    - generic [ref=e737]:
+                      - button "Add to timeline" [ref=e738] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e739] [cursor=pointer]:
+                        - img
+                  - generic [ref=e740]:
+                    - button "tone beep.wav Mossy4" [ref=e741]:
+                      - img [ref=e744]
+                      - generic [ref=e746]:
+                        - paragraph [ref=e747]: tone beep.wav
+                        - generic [ref=e748]: Mossy4
+                    - generic [ref=e749]:
+                      - button "Add to timeline" [ref=e750] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e751] [cursor=pointer]:
+                        - img
+                  - generic [ref=e752]:
+                    - button "Mechanical Keyboard Typing GeorgeHopkins" [ref=e753]:
+                      - img [ref=e756]
+                      - generic [ref=e758]:
+                        - paragraph [ref=e759]: Mechanical Keyboard Typing
+                        - generic [ref=e760]: GeorgeHopkins
+                    - generic [ref=e761]:
+                      - button "Add to timeline" [ref=e762] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e763] [cursor=pointer]:
+                        - img
+                  - generic [ref=e764]:
+                    - button "bad explosion deleted_user_364925" [ref=e765]:
+                      - img [ref=e768]
+                      - generic [ref=e770]:
+                        - paragraph [ref=e771]: bad explosion
+                        - generic [ref=e772]: deleted_user_364925
+                    - generic [ref=e773]:
+                      - button "Add to timeline" [ref=e774] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e775] [cursor=pointer]:
+                        - img
+                  - generic [ref=e776]:
+                    - button "Footsteps on concrete florianreichelt" [ref=e777]:
+                      - img [ref=e780]
+                      - generic [ref=e782]:
+                        - paragraph [ref=e783]: Footsteps on concrete
+                        - generic [ref=e784]: florianreichelt
+                    - generic [ref=e785]:
+                      - button "Add to timeline" [ref=e786] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e787] [cursor=pointer]:
+                        - img
+                  - generic [ref=e788]:
+                    - button "Spring Birds Loop with Low-Cut (New Jersey) hargissssound" [ref=e789]:
+                      - img [ref=e792]
+                      - generic [ref=e794]:
+                        - paragraph [ref=e795]: Spring Birds Loop with Low-Cut (New Jersey)
+                        - generic [ref=e796]: hargissssound
+                    - generic [ref=e797]:
+                      - button "Add to timeline" [ref=e798] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e799] [cursor=pointer]:
+                        - img
+                  - generic [ref=e800]:
+                    - button "meadow ambience.WAV eric5335" [ref=e801]:
+                      - img [ref=e804]
+                      - generic [ref=e806]:
+                        - paragraph [ref=e807]: meadow ambience.WAV
+                        - generic [ref=e808]: eric5335
+                    - generic [ref=e809]:
+                      - button "Add to timeline" [ref=e810] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e811] [cursor=pointer]:
+                        - img
+                  - generic [ref=e812]:
+                    - button "whoosh.wav Benboncan" [ref=e813]:
+                      - img [ref=e816]
+                      - generic [ref=e818]:
+                        - paragraph [ref=e819]: whoosh.wav
+                        - generic [ref=e820]: Benboncan
+                    - generic [ref=e821]:
+                      - button "Add to timeline" [ref=e822] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e823] [cursor=pointer]:
+                        - img
+                  - generic [ref=e824]:
+                    - button "Ringing in the Ears hykenfreak" [ref=e825]:
+                      - img [ref=e828]
+                      - generic [ref=e830]:
+                        - paragraph [ref=e831]: Ringing in the Ears
+                        - generic [ref=e832]: hykenfreak
+                    - generic [ref=e833]:
+                      - button "Add to timeline" [ref=e834] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e835] [cursor=pointer]:
+                        - img
+                  - generic [ref=e836]:
+                    - button "Waves of Hawaii florianreichelt" [ref=e837]:
+                      - img [ref=e840]
+                      - generic [ref=e842]:
+                        - paragraph [ref=e843]: Waves of Hawaii
+                        - generic [ref=e844]: florianreichelt
+                    - generic [ref=e845]:
+                      - button "Add to timeline" [ref=e846] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e847] [cursor=pointer]:
+                        - img
+                  - generic [ref=e848]:
+                    - button "Cinematic Impact deleted_user_3277771" [ref=e849]:
+                      - img [ref=e852]
+                      - generic [ref=e854]:
+                        - paragraph [ref=e855]: Cinematic Impact
+                        - generic [ref=e856]: deleted_user_3277771
+                    - generic [ref=e857]:
+                      - button "Add to timeline" [ref=e858] [cursor=pointer]:
+                        - img
+                      - button "Save sound" [ref=e859] [cursor=pointer]:
+                        - img
+        - separator [ref=e96]
+        - generic [ref=e99]:
+          - application "Preview canvas" [ref=e104]
+          - generic [ref=e105]:
+            - generic [ref=e106]:
+              - button "00:00:00:00" [ref=e107] [cursor=pointer]
+              - generic [ref=e108]: /
+              - generic [ref=e109]: 00:00:00:00
+            - button [ref=e110] [cursor=pointer]:
+              - img
+            - generic [ref=e111]:
+              - combobox [ref=e112] [cursor=pointer]:
+                - generic [ref=e113]: Fit
+                - img [ref=e114]
+              - button [ref=e116] [cursor=pointer]:
+                - img
+        - separator [ref=e117]
+        - generic [ref=e120]:
+          - img [ref=e121]
+          - generic [ref=e125]:
+            - paragraph [ref=e126]: It's empty here
+            - paragraph [ref=e127]: Click an element on the timeline to edit its properties
+      - separator [ref=e128]
+      - region "Timeline" [ref=e130]:
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - button [ref=e134] [cursor=pointer]:
+              - img
+            - button [ref=e135] [cursor=pointer]:
+              - img
+            - button [ref=e136] [cursor=pointer]:
+              - img
+            - generic [ref=e137]:
+              - button [disabled]:
+                - img
+            - button [ref=e138] [cursor=pointer]:
+              - img
+            - generic [ref=e139]:
+              - button [disabled]:
+                - img
+            - button [ref=e140] [cursor=pointer]:
+              - img
+            - button [ref=e142] [cursor=pointer]:
+              - img
+            - generic [ref=e143]:
+              - button [disabled]:
+                - img
+          - generic [ref=e145]:
+            - button "Main scene" [ref=e146]:
+              - generic [ref=e147]: Main scene
+            - button [ref=e148] [cursor=pointer]:
+              - img
+          - generic [ref=e149]:
+            - button [ref=e150] [cursor=pointer]:
+              - img
+            - button [ref=e151] [cursor=pointer]:
+              - img
+            - generic [ref=e153]:
+              - button [ref=e154] [cursor=pointer]:
+                - img
+              - slider [ref=e158]
+              - button [ref=e159] [cursor=pointer]:
+                - img
+        - generic [ref=e160]:
+          - generic [ref=e167]:
+            - img [ref=e168] [cursor=pointer]
+            - img [ref=e172] [cursor=pointer]
+            - img "Video" [ref=e175]
+          - generic [ref=e178]:
+            - generic [ref=e180]:
+              - slider "Timeline ruler" [ref=e181]:
+                - generic [ref=e182]: 00:00
+                - generic [ref=e187]: 15f
+                - generic [ref=e192]: 00:01
+                - generic [ref=e197]: 15f
+                - generic [ref=e202]: 00:02
+                - generic [ref=e207]: 15f
+                - generic [ref=e212]: 00:03
+                - generic [ref=e217]: 15f
+                - generic [ref=e222]: 00:04
+              - button "Timeline ruler" [ref=e224]
+            - button "Select Main Track track" [ref=e230]
+            - slider "Timeline playhead":
+              - button "Drag playhead" [ref=e233]
+    - generic [ref=e234]:
+      - generic [ref=e235]:
+        - generic [ref=e236]:
+          - generic [ref=e237]: Masks, animation & more
+          - generic [ref=e238]: v0.3.0
+        - button "Dismiss" [ref=e239] [cursor=pointer]:
+          - img
+      - paragraph [ref=e240]: Masks, graph editor for curves, volume & speed controls, preview zoom, canvas backgrounds, and stickers.
+      - link "See full changelog" [ref=e242] [cursor=pointer]:
+        - /url: /changelog
+    - button "Asistente de edición IA" [ref=e244] [cursor=pointer]:
+      - img

@@ -24,3 +24,4 @@ bun.lockb
 target/
 
 .cargo-tools/
+.osgrep

@@ -1,0 +1,5 @@
+[     606ms] [LOG] %c[·] %cReact Scan font-weight:bold;color:#7a68e8;font-size:20px; font-weight:bold;font-size:14px; @ http://unpkg.com/react-scan/dist/auto.global.js:1
+[     705ms] [LOG] [HMR] connected @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[    1188ms] [WARNING] [React Scan] react-grab v0.1.32 is outdated (latest: v0.1.44). Update react-scan to pick up the newer react-grab. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[    4232ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[    4233ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297

@@ -1,0 +1,173 @@
+- generic [ref=e1]:
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e255] [cursor=pointer]:
+    - img [ref=e256]
+  - alert [ref=e276]
+  - generic [ref=e277]:
+    - banner [ref=e278]:
+      - generic [ref=e279]:
+        - button "Project thumbnail" [ref=e280] [cursor=pointer]:
+          - img "Project thumbnail" [ref=e281]
+        - textbox [ref=e282] [cursor=pointer]: New project
+      - navigation [ref=e283]:
+        - button "Send feedback" [ref=e284] [cursor=pointer]
+        - button "Export" [ref=e285] [cursor=pointer]:
+          - generic [ref=e286]:
+            - img [ref=e287]
+            - generic [ref=e291]: Export
+        - button "Dark" [ref=e294] [cursor=pointer]:
+          - img
+          - generic [ref=e295]: Dark
+    - generic [ref=e297]:
+      - generic [ref=e299]:
+        - generic [ref=e301]:
+          - generic [ref=e303]:
+            - button "Media" [ref=e304] [cursor=pointer]:
+              - img
+            - button "Sounds" [ref=e305] [cursor=pointer]:
+              - img
+            - button "Text" [ref=e306] [cursor=pointer]:
+              - img
+            - button "Stickers" [ref=e307] [cursor=pointer]:
+              - img
+            - button "Effects" [ref=e308] [cursor=pointer]:
+              - img
+            - button "Transitions" [ref=e309] [cursor=pointer]:
+              - img
+            - button "Captions" [active] [ref=e310] [cursor=pointer]:
+              - img
+            - button "Adjustment" [ref=e311] [cursor=pointer]:
+              - img
+            - button "Settings" [ref=e312] [cursor=pointer]:
+              - img
+          - generic [ref=e596]:
+            - generic [ref=e597]:
+              - generic [ref=e598]: Captions
+              - button "Import" [ref=e600] [cursor=pointer]:
+                - img
+                - text: Import
+            - generic [ref=e604]:
+              - generic [ref=e606]:
+                - generic [ref=e608]: Language
+                - combobox [ref=e609] [cursor=pointer]:
+                  - generic [ref=e610]:
+                    - generic: Auto detect
+                  - img [ref=e611]
+              - button "Generate transcript" [ref=e613] [cursor=pointer]
+        - separator [ref=e341]
+        - generic [ref=e344]:
+          - application "Preview canvas" [ref=e349]
+          - generic [ref=e350]:
+            - generic [ref=e351]:
+              - button "00:00:00:00" [ref=e352] [cursor=pointer]
+              - generic [ref=e353]: /
+              - generic [ref=e354]: 00:00:12:16
+            - button [ref=e355] [cursor=pointer]:
+              - img
+            - generic [ref=e356]:
+              - combobox [ref=e357] [cursor=pointer]:
+                - generic [ref=e358]: Fit
+                - img [ref=e359]
+              - button [ref=e361] [cursor=pointer]:
+                - img
+        - separator [ref=e362]
+        - generic [ref=e364]:
+          - generic [ref=e533]:
+            - button "Audio" [ref=e534] [cursor=pointer]:
+              - img
+            - button "Speed" [ref=e535] [cursor=pointer]:
+              - img
+          - generic [ref=e537]:
+            - generic [ref=e538]:
+              - button "Audio" [ref=e539] [cursor=pointer]:
+                - generic [ref=e541]: Audio
+              - button "Collapse section" [ref=e543] [cursor=pointer]:
+                - img
+            - generic [ref=e548]:
+              - generic [ref=e549]:
+                - button "Toggle volume keyframe" [ref=e550] [cursor=pointer]:
+                  - img
+                - generic [ref=e551]: Volume
+              - generic [ref=e552]:
+                - button "Drag to adjust value" [ref=e553]:
+                  - img [ref=e554]
+                - generic [ref=e558]:
+                  - textbox [ref=e559]: "0.0"
+                  - generic: dB
+      - separator [ref=e373]
+      - region "Timeline" [ref=e375]:
+        - generic [ref=e377]:
+          - generic [ref=e378]:
+            - button [ref=e379] [cursor=pointer]:
+              - img
+            - button [ref=e380] [cursor=pointer]:
+              - img
+            - button [ref=e381] [cursor=pointer]:
+              - img
+            - generic [ref=e382]:
+              - button [disabled]:
+                - img
+            - button [ref=e383] [cursor=pointer]:
+              - img
+            - generic [ref=e384]:
+              - button [disabled]:
+                - img
+            - button [ref=e385] [cursor=pointer]:
+              - img
+            - button [ref=e387] [cursor=pointer]:
+              - img
+            - generic [ref=e388]:
+              - button [disabled]:
+                - img
+          - generic [ref=e390]:
+            - button "Main scene" [ref=e391]:
+              - generic [ref=e392]: Main scene
+            - button [ref=e393] [cursor=pointer]:
+              - img
+          - generic [ref=e394]:
+            - button [ref=e395] [cursor=pointer]:
+              - img
+            - button [ref=e396] [cursor=pointer]:
+              - img
+            - generic [ref=e398]:
+              - button [ref=e399] [cursor=pointer]:
+                - img
+              - slider [ref=e403]
+              - button [ref=e404] [cursor=pointer]:
+                - img
+        - generic [ref=e405]:
+          - generic [ref=e410]:
+            - generic [ref=e412]:
+              - img [ref=e413] [cursor=pointer]
+              - img [ref=e417] [cursor=pointer]
+              - img "Video" [ref=e420]
+            - generic [ref=e562]:
+              - img [ref=e563] [cursor=pointer]
+              - img [ref=e567]
+          - generic [ref=e423]:
+            - generic [ref=e425]:
+              - slider "Timeline ruler" [ref=e426]:
+                - generic [ref=e427]: 00:00
+                - generic [ref=e432]: 15f
+                - generic [ref=e437]: 00:01
+                - generic [ref=e442]: 15f
+                - generic [ref=e447]: 00:02
+                - generic [ref=e452]: 15f
+                - generic [ref=e457]: 00:03
+                - generic [ref=e462]: 15f
+                - generic [ref=e467]: 00:04
+                - generic [ref=e577]: 15f
+              - button "Timeline ruler" [ref=e469]
+            - generic [ref=e472]:
+              - button "Select Main Track track" [ref=e475]
+              - generic [ref=e582]:
+                - button "Select Audio track track" [ref=e583]
+                - generic [ref=e586]:
+                  - button "subtitle-sample.m4a" [ref=e589]:
+                    - generic [ref=e593]: subtitle-sample.m4a
+                  - button "Left resize handle" [ref=e594]
+                  - button "Right resize handle" [ref=e595]
+            - slider "Timeline playhead":
+              - button "Drag playhead" [ref=e478]
+    - button "Asistente de edición IA" [ref=e480] [cursor=pointer]:
+      - img

@@ -25,6 +25,14 @@ const MAX_AUDIO_CHANNELS = 2;
 const EXPORT_SAMPLE_RATE = 44100;
 const COARSE_SAMPLE_COUNT = 2048;
 
+// Optional predicate to restrict which timeline elements contribute audio.
+// Used to transcribe a SINGLE source (e.g. just one video, or just one audio
+// clip) instead of the whole mixed timeline. Omit to include everything.
+export type AudioElementFilter = (element: {
+	id: string;
+	type: string;
+}) => boolean;
+
 export interface CollectedAudioElement {
 	timelineElement: AudioCapableElement;
 	buffer: AudioBuffer;
@@ -53,6 +61,58 @@ export function createAudioContext({
 export interface DecodedAudio {
 	samples: Float32Array;
 	sampleRate: number;
+}
+
+// Extract the timeline's audio as mono Float32 samples at the given rate,
+// ready for speech-to-text. Unlike the old extractTimelineAudio +
+// decodeAudioToFloat32 chain, this keeps the heavy work OFF the main thread:
+// per-source decode/resampling (decodeAudioData / OfflineAudioContext) and the
+// final stereo->mono downmix all run off-thread, and we render the mix straight
+// at the transcription rate (16 kHz) instead of encoding/decoding a 44.1 kHz
+// WAV round-trip with giant synchronous loops. This is what stops the editor
+// from freezing while subtitles generate.
+export async function extractTranscriptionSamples({
+	tracks,
+	mediaAssets,
+	totalDuration,
+	targetSampleRate = 16000,
+	filterElement,
+}: {
+	tracks: SceneTracks;
+	mediaAssets: MediaAsset[];
+	totalDuration: number;
+	targetSampleRate?: number;
+	filterElement?: AudioElementFilter;
+}): Promise<DecodedAudio> {
+	const mix = await createTimelineAudioBuffer({
+		tracks,
+		mediaAssets,
+		duration: totalDuration,
+		sampleRate: targetSampleRate,
+		filterElement,
+	});
+
+	// No audible content (or empty timeline): hand back a short silence so the
+	// caller can decide there's nothing to transcribe.
+	if (!mix || mix.length === 0) {
+		return {
+			samples: new Float32Array(Math.ceil(targetSampleRate * 0.1)),
+			sampleRate: targetSampleRate,
+		};
+	}
+
+	if (mix.numberOfChannels === 1) {
+		return { samples: mix.getChannelData(0), sampleRate: mix.sampleRate };
+	}
+
+	// Downmix stereo -> mono off the main thread via OfflineAudioContext.
+	const offline = new OfflineAudioContext(1, mix.length, mix.sampleRate);
+	const source = offline.createBufferSource();
+	source.buffer = mix;
+	source.connect(offline.destination);
+	source.start();
+	const mono = await offline.startRendering();
+	return { samples: mono.getChannelData(0), sampleRate: mono.sampleRate };
 }
 
 export async function decodeAudioToFloat32({
@@ -90,9 +150,11 @@ export interface AudibleElementCandidate {
 export function collectAudibleCandidates({
 	tracks,
 	mediaAssets,
+	filterElement,
 }: {
 	tracks: SceneTracks;
 	mediaAssets: MediaAsset[];
+	filterElement?: AudioElementFilter;
 }): AudibleElementCandidate[] {
 	const allTracks = [...tracks.overlay, tracks.main, ...tracks.audio];
 	const mediaMap = new Map(mediaAssets.map((a) => [a.id, a]));
@@ -104,6 +166,7 @@ export function collectAudibleCandidates({
 		for (const element of track.elements) {
 			if (!canElementHaveAudio(element)) continue;
 			if (element.duration <= 0) continue;
+			if (filterElement && !filterElement(element)) continue;
 
 			const mediaAsset = hasMediaId(element)
 				? (mediaMap.get(element.mediaId) ?? null)
@@ -133,12 +196,18 @@ export async function collectAudioElements({
 	tracks,
 	mediaAssets,
 	audioContext,
+	filterElement,
 }: {
 	tracks: SceneTracks;
 	mediaAssets: MediaAsset[];
 	audioContext: AudioContext;
+	filterElement?: AudioElementFilter;
 }): Promise<CollectedAudioElement[]> {
-	const candidates = collectAudibleCandidates({ tracks, mediaAssets });
+	const candidates = collectAudibleCandidates({
+		tracks,
+		mediaAssets,
+		filterElement,
+	});
 	const mediaMap = new Map<string, MediaAsset>(
 		mediaAssets.map((media) => [media.id, media]),
 	);
@@ -618,12 +687,14 @@ export async function createTimelineAudioBuffer({
 	duration,
 	sampleRate = EXPORT_SAMPLE_RATE,
 	audioContext,
+	filterElement,
 }: {
 	tracks: SceneTracks;
 	mediaAssets: MediaAsset[];
 	duration: number;
 	sampleRate?: number;
 	audioContext?: AudioContext;
+	filterElement?: AudioElementFilter;
 }): Promise<AudioBuffer | null> {
 	const context = audioContext ?? createAudioContext({ sampleRate });
 
@@ -631,6 +702,7 @@ export async function createTimelineAudioBuffer({
 		tracks,
 		mediaAssets,
 		audioContext: context,
+		filterElement,
 	});
 
 	if (audioElements.length === 0) return null;

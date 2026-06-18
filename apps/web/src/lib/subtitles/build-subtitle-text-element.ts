@@ -250,10 +250,14 @@ export function buildSubtitleTextElement({
 	index,
 	caption,
 	canvasSize,
+	sourceLabel,
 }: {
 	index: number;
 	caption: SubtitleCue;
 	canvasSize: { width: number; height: number };
+	// Optional source tag (e.g. "video", "audio") woven into the element name so
+	// captions from different sources can be targeted/removed independently.
+	sourceLabel?: string;
 }): CreateTextElement {
 	const ctx = createMeasurementContext();
 	const style = resolveSubtitleStyle({
@@ -308,7 +312,9 @@ export function buildSubtitleTextElement({
 
 	return {
 		...DEFAULTS.text.element,
-		name: `Caption ${index + 1}`,
+		name: sourceLabel
+			? `Caption ${sourceLabel} ${index + 1}`
+			: `Caption ${index + 1}`,
 		content,
 		duration: Math.round(caption.duration * TICKS_PER_SECOND),
 		startTime: Math.round(caption.startTime * TICKS_PER_SECOND),

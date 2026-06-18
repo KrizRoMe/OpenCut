@@ -1,0 +1,48 @@
+[      95ms] [LOG] %c[·] %cReact Scan font-weight:bold;color:#7a68e8;font-size:20px; font-weight:bold;font-size:14px; @ http://unpkg.com/react-scan/dist/auto.global.js:1
+[     117ms] [LOG] [HMR] connected @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[     265ms] [WARNING] [React Scan] react-grab v0.1.32 is outdated (latest: v0.1.44). Update react-scan to pick up the newer react-grab. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   11130ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   11143ms] [LOG] [Fast Refresh] done in 114ms @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   11492ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   11507ms] [LOG] [Fast Refresh] done in 117ms @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   51626ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   51627ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   51741ms] [LOG] [Fast Refresh] done in 43ms @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   66381ms] [LOG] %c[·] %cReact Scan font-weight:bold;color:#7a68e8;font-size:20px; font-weight:bold;font-size:14px; @ http://unpkg.com/react-scan/dist/auto.global.js:1
+[   66452ms] [LOG] [HMR] connected @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   66677ms] [WARNING] [React Scan] react-grab v0.1.32 is outdated (latest: v0.1.44). Update react-scan to pick up the newer react-grab. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   73696ms] [LOG] %c[·] %cReact Scan font-weight:bold;color:#7a68e8;font-size:20px; font-weight:bold;font-size:14px; @ http://unpkg.com/react-scan/dist/auto.global.js:1
+[   73717ms] [LOG] [HMR] connected @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[   73839ms] [WARNING] [React Scan] react-grab v0.1.32 is outdated (latest: v0.1.44). Update react-scan to pick up the newer react-grab. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  155680ms] [ERROR] WebSocket connection to 'ws://localhost:3005/_next/webpack-hmr?id=yAJzUJ5BFygm1yaZkh3et' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3005/_next/static/chunks/7d351_next_dist_client_9b84ed4b._.js:10878
+[  156683ms] [ERROR] WebSocket connection to 'ws://localhost:3005/_next/webpack-hmr?id=yAJzUJ5BFygm1yaZkh3et' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3005/_next/static/chunks/7d351_next_dist_client_9b84ed4b._.js:10878
+[  157688ms] [ERROR] WebSocket connection to 'ws://localhost:3005/_next/webpack-hmr?id=yAJzUJ5BFygm1yaZkh3et' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3005/_next/static/chunks/7d351_next_dist_client_9b84ed4b._.js:10878
+[  158693ms] [ERROR] WebSocket connection to 'ws://localhost:3005/_next/webpack-hmr?id=yAJzUJ5BFygm1yaZkh3et' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3005/_next/static/chunks/7d351_next_dist_client_9b84ed4b._.js:10878
+[  159704ms] [LOG] [HMR] connected @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  160236ms] [ERROR] Failed to load resource: the server responded with a status of 402 () @ https://basket.databuddy.cc/batch?client_id=UP-Wcoy5arxFeK7oyjMMZ:0
+[  161070ms] [LOG] %c[·] %cReact Scan font-weight:bold;color:#7a68e8;font-size:20px; font-weight:bold;font-size:14px; @ http://unpkg.com/react-scan/dist/auto.global.js:1
+[  161109ms] [LOG] [HMR] connected @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  161212ms] [WARNING] [React Scan] react-grab v0.1.32 is outdated (latest: v0.1.44). Update react-scan to pick up the newer react-grab. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  203398ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  203584ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  203668ms] [LOG] [Fast Refresh] done in 286ms @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  204028ms] [LOG] %c[·] %cReact Scan font-weight:bold;color:#7a68e8;font-size:20px; font-weight:bold;font-size:14px; @ http://unpkg.com/react-scan/dist/auto.global.js:1
+[  204040ms] [LOG] [HMR] connected @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  204169ms] [WARNING] [React Scan] react-grab v0.1.32 is outdated (latest: v0.1.44). Update react-scan to pick up the newer react-grab. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  338981ms] [LOG] %c[·] %cReact Scan font-weight:bold;color:#7a68e8;font-size:20px; font-weight:bold;font-size:14px; @ http://unpkg.com/react-scan/dist/auto.global.js:1
+[  339017ms] [LOG] [HMR] connected @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
+[  339234ms] [WARNING] [React Scan] react-grab v0.1.32 is outdated (latest: v0.1.44). Update react-scan to pick up the newer react-grab. @ http://localhost:3005/_next/static/chunks/7d351_next_dist_106550e6._.js:2297
