@@ -3,7 +3,7 @@
 // the browser), so this route only returns { action, payload }.
 
 import { NextResponse } from "next/server";
-import { callMinimax } from "@/lib/minimax/client";
+import { callMinimax, stripThinking } from "@/lib/minimax/client";
 import { SKILL_SYSTEM_PROMPT, SKILL_TOOLS } from "@/lib/minimax/tools";
 
 interface HistoryMessage {
@@ -22,12 +22,18 @@ export async function POST(request: Request) {
 	try {
 		body = (await request.json()) as InterpretBody;
 	} catch {
-		return NextResponse.json({ success: false, error: "Invalid JSON" }, { status: 400 });
+		return NextResponse.json(
+			{ success: false, error: "Invalid JSON" },
+			{ status: 400 },
+		);
 	}
 
 	const message = typeof body.message === "string" ? body.message.trim() : "";
 	if (!message) {
-		return NextResponse.json({ success: false, error: "Empty message" }, { status: 422 });
+		return NextResponse.json(
+			{ success: false, error: "Empty message" },
+			{ status: 422 },
+		);
 	}
 
 	const stateContext = body.snapshot
@@ -59,14 +65,16 @@ export async function POST(request: Request) {
 		const choice = response.choices?.[0];
 		const toolCalls = choice?.message?.tool_calls ?? [];
 		if (toolCalls.length === 0) {
-			return NextResponse.json(
-				{
-					success: false,
-					error: "El asistente no pudo convertir la instrucción en una acción.",
-					rawResponse: choice?.message?.content ?? "",
-				},
-				{ status: 400 },
-			);
+			// Not an editing action (greeting, identity question, small talk): the
+			// model answered conversationally. Return that reply directly.
+			const reply = stripThinking(choice?.message?.content ?? "");
+			return NextResponse.json({
+				success: true,
+				actions: [],
+				reply:
+					reply ||
+					"No pude convertir eso en una acción de edición. ¿Puedes reformularlo?",
+			});
 		}
 
 		// A request may decompose into several ordered actions (composite edits).
@@ -89,7 +97,10 @@ export async function POST(request: Request) {
 		});
 	} catch (err) {
 		return NextResponse.json(
-			{ success: false, error: err instanceof Error ? err.message : "AI error" },
+			{
+				success: false,
+				error: err instanceof Error ? err.message : "AI error",
+			},
 			{ status: 400 },
 		);
 	}

@@ -65,7 +65,11 @@ export function PreviewToolbar({
 
 function TimecodeDisplay() {
 	const editor = useEditor();
-	const totalDuration = useEditor((e) => e.timeline.getTotalDuration());
+	// wasm timecode helpers take i64 ticks; round to tolerate any fractional
+	// duration already persisted from a retimed clip.
+	const totalDuration = useEditor((e) =>
+		Math.round(e.timeline.getTotalDuration()),
+	);
 	const fps = useEditor((e) => e.project.getActive().settings.fps);
 	const [currentTime, setCurrentTime] = useState(() =>
 		editor.playback.getCurrentTime(),
@@ -94,7 +98,11 @@ function TimecodeDisplay() {
 			/>
 			<span className="text-muted-foreground px-2 font-mono text-xs">/</span>
 			<span className="text-muted-foreground font-mono text-xs">
-				{formatTimecode({ time: totalDuration, format: "HH:MM:SS:FF", rate: fps })}
+				{formatTimecode({
+					time: totalDuration,
+					format: "HH:MM:SS:FF",
+					rate: fps,
+				})}
 			</span>
 		</div>
 	);

@@ -4,7 +4,11 @@ import {
 	getSourceSpanAtClipTime,
 	getTimelineDurationForSourceSpan,
 } from "@/lib/retime";
-import type { RetimeConfig, SceneTracks, TimelineElement } from "@/lib/timeline";
+import type {
+	RetimeConfig,
+	SceneTracks,
+	TimelineElement,
+} from "@/lib/timeline";
 import { isRetimableElement } from "@/lib/timeline";
 
 type ElementUpdateField = keyof TimelineElement | string;
@@ -61,10 +65,14 @@ const deriveRules: ElementUpdateRule[] = [
 				0,
 				sourceDuration - element.trimStart - element.trimEnd,
 			);
-			const nextDuration = getTimelineDurationForSourceSpan({
-				sourceSpan: visibleSourceSpan,
-				retime: nextRetime,
-			});
+			// Timeline ticks are i64 in wasm — a fractional rate (e.g. 0.75x) yields a
+			// fractional tick count that crashes formatTimecode/seek. Snap to whole ticks.
+			const nextDuration = Math.round(
+				getTimelineDurationForSourceSpan({
+					sourceSpan: visibleSourceSpan,
+					retime: nextRetime,
+				}),
+			);
 
 			return {
 				element: {
@@ -136,9 +144,7 @@ export function applyElementUpdate({
 	context: ElementUpdateContext;
 }): TimelineElement {
 	let nextElement = { ...element, ...patch } as TimelineElement;
-	const changedFields = new Set(
-		Object.keys(patch) as ElementUpdateField[],
-	);
+	const changedFields = new Set(Object.keys(patch) as ElementUpdateField[]);
 
 	for (const rule of deriveRules) {
 		if (!shouldApplyRule({ rule, changedFields })) {

@@ -1,9 +1,6 @@
 import type { EditorCore } from "@/core";
 import { TICKS_PER_SECOND } from "@/lib/wasm";
-import {
-	clampRetimeRate,
-	shouldMaintainPitch,
-} from "@/lib/retime/rate";
+import { clampRetimeRate, shouldMaintainPitch } from "@/lib/retime/rate";
 import type { AudioClipSource } from "@/lib/media/audio";
 import { createAudioContext, collectAudioClips } from "@/lib/media/audio";
 import {
@@ -126,7 +123,9 @@ export class AudioManager {
 
 		if (!this.editor.playback.getIsPlaying()) return;
 
-		void this.startPlayback({ time: this.editor.playback.getCurrentTime() / TICKS_PER_SECOND });
+		void this.startPlayback({
+			time: this.editor.playback.getCurrentTime() / TICKS_PER_SECOND,
+		});
 	};
 
 	private ensureAudioContext(): AudioContext | null {
@@ -339,6 +338,18 @@ export class AudioManager {
 				}
 			}
 
+			// Bound the node to the clip's (possibly trimmed) end. With an in-memory
+			// buffer the sink yields the whole source as ONE chunk, so without this
+			// the full sound plays even when the clip was trimmed shorter on the
+			// timeline (the `break` above only prevents future chunks).
+			const clipEndTimestamp =
+				this.playbackStartContextTime +
+				this.playbackLatencyCompensationSeconds +
+				(clipEnd - this.playbackStartTime);
+			try {
+				node.stop(clipEndTimestamp);
+			} catch {}
+
 			this.queuedSources.add(node);
 			node.addEventListener("ended", () => {
 				node.disconnect();
@@ -400,14 +411,20 @@ export class AudioManager {
 		let actualStartTimestamp = startTimestamp;
 		let actualClipOffset = clipOffset;
 
-		if (startTimestamp >= audioContext.currentTime) {
-			node.start(startTimestamp, clipOffset);
-		} else {
+		if (startTimestamp < audioContext.currentTime) {
 			const lateOffset = audioContext.currentTime - startTimestamp;
 			actualStartTimestamp = audioContext.currentTime;
 			actualClipOffset = clipOffset + lateOffset;
-			node.start(actualStartTimestamp, actualClipOffset);
 		}
+
+		// Read from trimStart into the source and only play the remaining visible
+		// duration. Without the duration arg the whole buffer plays, so a clip
+		// trimmed shorter on the timeline still sounded in full. (All values are
+		// in seconds — AudioClipSource is converted from ticks on construction.)
+		const sourceOffset = clip.trimStart + actualClipOffset;
+		const playableDuration = clip.duration - actualClipOffset;
+		if (playableDuration <= 0) return;
+		node.start(actualStartTimestamp, sourceOffset, playableDuration);
 
 		this.scheduleClipGainAutomation({
 			audioContext,

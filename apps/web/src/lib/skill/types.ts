@@ -19,8 +19,15 @@ export type SkillActionName =
 	| "replace_audio"
 	| "change_speed"
 	| "add_clip"
+	| "duplicate_clip"
+	| "delete_segment"
+	| "set_transform"
+	| "fade"
 	| "insert_as_continuation"
 	| "add_background_music"
+	| "add_sound_effect"
+	| "generate_subtitles"
+	| "export_subtitles"
 	| "set_aspect_ratio"
 	| "zoom_timeline"
 	| "export_video"
@@ -67,5 +74,10 @@ export interface EditorSnapshot {
 }
 
 export type SkillResult =
-	| { success: true; message: string; snapshot: EditorSnapshot; extra?: Record<string, unknown> }
+	| {
+			success: true;
+			message: string;
+			snapshot: EditorSnapshot;
+			extra?: Record<string, unknown>;
+	  }
 	| { success: false; error: string };

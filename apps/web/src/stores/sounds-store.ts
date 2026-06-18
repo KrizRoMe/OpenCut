@@ -4,6 +4,7 @@ import { storageService } from "@/services/storage/service";
 import { toast } from "sonner";
 import { EditorCore } from "@/core";
 import { buildLibraryAudioElement } from "@/lib/timeline/element-utils";
+import { TICKS_PER_SECOND } from "@/lib/wasm/ticks";
 
 interface SoundsStore {
 	topSoundEffects: SoundEffect[];
@@ -104,14 +105,20 @@ export const useSoundsStore = create<SoundsStore>((set, get) => ({
 	setLoadingMore: ({ loading }) => set({ isLoadingMore: loading }),
 
 	appendSearchResults: ({ results }) =>
-		set((state) => ({
-			searchResults: [...state.searchResults, ...results],
-		})),
+		set((state) => {
+			// Freesound pages can overlap (top vs. effects use different filters),
+			// so drop ids we already have to avoid duplicate React keys.
+			const existing = new Set(state.searchResults.map((s) => s.id));
+			const fresh = results.filter((s) => !existing.has(s.id));
+			return { searchResults: [...state.searchResults, ...fresh] };
+		}),
 
 	appendTopSounds: ({ results }) =>
-		set((state) => ({
-			topSoundEffects: [...state.topSoundEffects, ...results],
-		})),
+		set((state) => {
+			const existing = new Set(state.topSoundEffects.map((s) => s.id));
+			const fresh = results.filter((s) => !existing.has(s.id));
+			return { topSoundEffects: [...state.topSoundEffects, ...fresh] };
+		}),
 
 	resetPagination: () =>
 		set({
@@ -215,7 +222,6 @@ export const useSoundsStore = create<SoundsStore>((set, get) => ({
 		try {
 			const editor = EditorCore.getInstance();
 			const currentTime = editor.playback.getCurrentTime();
-			const tracks = editor.scenes.getActiveScene().tracks;
 
 			const response = await fetch(audioUrl);
 			if (!response.ok)
@@ -225,25 +231,21 @@ export const useSoundsStore = create<SoundsStore>((set, get) => ({
 			const audioContext = new AudioContext();
 			const buffer = await audioContext.decodeAudioData(arrayBuffer);
 
-			const audioTrack = tracks.audio[0];
-			let trackId: string;
-
-			if (audioTrack) {
-				trackId = audioTrack.id;
-			} else {
-				trackId = editor.timeline.addTrack({ type: "audio" });
-			}
-
 			const element = buildLibraryAudioElement({
 				sourceUrl: audioUrl,
 				name: sound.name,
-				duration: sound.duration,
+				// Freesound duration is in seconds; the timeline stores integer ticks.
+				// Without converting, the clip is inserted ~0 ticks long (invisible).
+				duration: Math.round(sound.duration * TICKS_PER_SECOND),
 				startTime: currentTime,
 				buffer,
 			});
 
+			// Auto placement finds-or-creates the audio track atomically. The old
+			// addTrack + explicit-placement path raced ("Track not found") when no
+			// audio track existed yet.
 			editor.timeline.insertElement({
-				placement: { mode: "explicit", trackId },
+				placement: { mode: "auto" },
 				element,
 			});
 			return true;

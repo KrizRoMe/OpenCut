@@ -40,6 +40,10 @@ export function useSoundSearch({
 			const searchParams = new URLSearchParams({
 				page: nextPage.toString(),
 				type: "effects",
+				// Must match the initial load's page size or the offsets misalign and
+				// page 2 just re-returns items already shown. Top list loads 50/page;
+				// a search loads the default 20/page.
+				page_size: query.trim() ? "20" : "50",
 			});
 
 			if (query.trim()) {
@@ -55,14 +59,14 @@ export function useSoundSearch({
 				const data = await response.json();
 
 				if (query.trim()) {
-					appendSearchResults(data.results);
+					appendSearchResults({ results: data.results });
 				} else {
-					appendTopSounds(data.results);
+					appendTopSounds({ results: data.results });
 				}
 
 				setCurrentPage({ page: nextPage });
 				setHasNextPage({ hasNext: !!data.next });
-				setTotalCount(data.count);
+				setTotalCount({ count: data.count });
 			} else {
 				setSearchError({ error: `Load more failed: ${response.status}` });
 			}

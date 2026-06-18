@@ -85,23 +85,64 @@ export function AiChat() {
 
 			// 3. Execute the action(s) against EditorCore (client-side), in order.
 			// A composite request may decompose into several ordered actions.
-			const actions: Array<{ action: string; payload?: Record<string, unknown> }> =
-				Array.isArray(data.actions) && data.actions.length > 0
-					? data.actions
-					: [{ action: data.action, payload: data.payload }];
+			const actions: Array<{
+				action: string;
+				payload?: Record<string, unknown>;
+			}> = Array.isArray(data.actions)
+				? data.actions
+				: data.action
+					? [{ action: data.action, payload: data.payload }]
+					: [];
+
+			// Conversational reply (no editing action — e.g. "¿qué IA eres?").
+			if (actions.length === 0) {
+				setMessages((m) => [
+					...m,
+					{
+						id: uid(),
+						role: "assistant",
+						content: data.reply ?? "¿En qué te ayudo con tu video?",
+					},
+				]);
+				return;
+			}
 
 			const outcomes: string[] = [];
+			const results: Array<{ action: string; ok: boolean; message: string }> =
+				[];
 			for (const act of actions) {
 				const result = await executeSkillAction({
 					action: act.action as SkillActionName,
 					payload: act.payload ?? {},
 				});
 				outcomes.push(result.success ? result.message : `⚠️ ${result.error}`);
+				results.push({
+					action: act.action,
+					ok: result.success,
+					message: result.success ? result.message : result.error,
+				});
+			}
+
+			// 4. Let the AI phrase the confirmation in natural language. Fall back to
+			// the executor's own messages if the model call fails.
+			let reply = outcomes.join("\n");
+			try {
+				const respondRes = await fetch("/api/ai/respond", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ message: text, results }),
+				});
+				const respondData = await respondRes.json();
+				if (respondData.success && typeof respondData.reply === "string") {
+					reply = respondData.reply;
+				}
+			} catch {
+				// keep the fallback reply
 			}
 
 			setMessages((m) => [
 				...m,
-				{ id: uid(), role: "assistant", content: outcomes.join("\n") },
+				{ id: uid(), role: "assistant", content: reply },
 			]);
 		} catch (err) {
 			setMessages((m) => [
@@ -140,15 +181,18 @@ export function AiChat() {
 						</Button>
 					</div>
 
-					<div ref={scrollRef} className="flex-1 space-y-2 overflow-y-auto px-3 py-3">
+					<div
+						ref={scrollRef}
+						className="flex-1 space-y-2 overflow-y-auto px-3 py-3"
+					>
 						{messages.length === 0 && (
 							<div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
 								<Bot className="size-6" />
 								<p className="text-xs">
 									Dame instrucciones en lenguaje natural.
 									<br />
-									Ej: "agrega un texto al inicio", "corta los primeros 3 segundos",
-									"añade música de fondo".
+									Ej: "agrega un texto al inicio", "corta los primeros 3
+									segundos", "añade música de fondo".
 								</p>
 							</div>
 						)}

@@ -1,5 +1,14 @@
 // MiniMax international platform (OpenAI-compatible) client. Server-side only.
 
+// MiniMax M2 interleaves chain-of-thought inside <think>...</think> blocks in
+// the message content. Strip them so only the final answer reaches the user.
+export function stripThinking(content: string): string {
+	return content
+		.replace(/<think>[\s\S]*?<\/think>/gi, "")
+		.replace(/<\/?think>/gi, "")
+		.trim();
+}
+
 const MINIMAX_API_URL =
 	process.env.MINIMAX_API_URL ?? "https://api.minimax.io/v1/chat/completions";
 const MODEL = process.env.MINIMAX_MODEL ?? "MiniMax-M2.7";
@@ -37,7 +46,7 @@ export async function callMinimax({
 	tools,
 }: {
 	messages: MinimaxMessage[];
-	tools: MinimaxTool[];
+	tools?: MinimaxTool[];
 }): Promise<MinimaxResponse> {
 	const apiKey = process.env.MINIMAX_API_KEY;
 	if (!apiKey) throw new Error("MINIMAX_API_KEY is not set");
@@ -45,8 +54,9 @@ export async function callMinimax({
 	const requestBody = JSON.stringify({
 		model: MODEL,
 		messages,
-		tools,
-		tool_choice: "auto",
+		// Only advertise tools when provided — a plain chat completion (e.g. to
+		// phrase a confirmation) must NOT force tool calls.
+		...(tools && tools.length > 0 ? { tools, tool_choice: "auto" } : {}),
 	});
 
 	// Retry transient network failures ("fetch failed") a couple of times.
