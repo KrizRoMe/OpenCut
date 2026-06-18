@@ -25,3 +25,5 @@ target/
 
 .cargo-tools/
 .osgrep
+
+.playwright-cli
