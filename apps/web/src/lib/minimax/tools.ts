@@ -37,6 +37,7 @@ More editing capabilities:
 - Remove subtitles: "quita / elimina / borra los subtítulos / quita los captions" => remove_subtitles (omit source to remove ALL; pass source "video"/"audio" to remove only that source's captions).
 - Restyle ALL subtitles at once: "haz los subtítulos amarillos / más grandes / en negrita / cambia la fuente de los subtítulos" => style_subtitles (color, fontSize, bold, italic, underline, fontFamily, textAlign). Use this — NOT update_text — when the user means every subtitle.
 - Export subtitles: "exporta/descarga los subtítulos (SRT)" => export_subtitles.
+- Auto-trim / clean up: "quita los silencios / las pausas", "limpia el audio", "elimina las palabras repetidas", "auto-trim" => auto_trim. It transcribes the clip on-device and removes silences + consecutive repeated words in place (with ripple). Targets the selected clip unless an elementId is given. Pass language when stated. removePhraseRestarts is off by default — only enable it if the user explicitly asks to remove restarted/incomplete phrases. Do NOT use delete_segment for this.
 - Sound effects: "añade un efecto de explosión/whoosh/aplausos", "pon un sonido de X (en el segundo N / del N al M)" => add_sound_effect (query = the effect; timelineStart/to in seconds when the user gives them). This searches a sound library — do NOT use add_audio (that needs a URL) for effects.
 IMPORTANT: requests like "inserta el video 2 en el segundo N y que el video 1 continúe después" / "corta el primero y mete el segundo como continuación en una sola línea" are a SINGLE composite action: use insert_as_continuation (do NOT use split_clip or trim_clip for these). Pass atSeconds = the cut point.
 The user may write in Spanish or English; understand both.`;
@@ -424,6 +425,43 @@ export const SKILL_TOOLS: MinimaxTool[] = [
 					to: { type: "number", description: "Segment end (seconds)" },
 				},
 				required: ["elementId", "from", "to"],
+			},
+		},
+	},
+	{
+		type: "function",
+		function: {
+			name: "auto_trim",
+			description:
+				"Automatically clean up a clip by detecting and removing silences, consecutive repeated words ('yo yo creo') and phrase restarts ('la app permite… la app permite exportar'). Transcribes the clip's audio on-device and trims it in place. Use for 'quita los silencios', 'limpia el audio', 'quita las palabras repetidas', 'auto-trim'. Omit elementId to target the selected clip.",
+			parameters: {
+				type: "object",
+				properties: {
+					elementId: {
+						type: "string",
+						description: "Clip to trim; omit to use the selected clip",
+					},
+					language: {
+						type: "string",
+						description:
+							"Spoken language, e.g. 'es' or 'en' (auto-detect if omitted)",
+					},
+					removeSilences: { type: "boolean" },
+					silenceThresholdDb: {
+						type: "number",
+						description: "Silence threshold in dBFS (default -40)",
+					},
+					minSilenceMs: {
+						type: "number",
+						description: "Pauses shorter than this are kept (default 700)",
+					},
+					removeRepeatedWords: { type: "boolean" },
+					removePhraseRestarts: {
+						type: "boolean",
+						description:
+							"Remove restarted phrases (conservative, off by default)",
+					},
+				},
 			},
 		},
 	},

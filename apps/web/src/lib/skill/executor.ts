@@ -26,6 +26,8 @@ import {
 import { TICKS_PER_SECOND } from "@/lib/wasm/ticks";
 import { FONT_SIZE_SCALE_REFERENCE } from "@/lib/text/typography";
 import { useTranscriptionJobsStore } from "@/stores/transcription-jobs-store";
+import { useSilenceTrimJobsStore } from "@/stores/silence-trim-jobs-store";
+import type { AutoTrimConfig } from "@/lib/silence";
 import type { TranscriptionLanguage } from "@/lib/transcription/types";
 import { timelineHasAudio } from "@/lib/media/audio";
 import { getEditorSnapshot } from "./state";
@@ -128,6 +130,55 @@ function num(value: unknown, fallback: number): number {
 
 function str(value: unknown): string | undefined {
 	return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+// Parse a loosely-typed boolean payload value (the LLM may send a real boolean
+// or the strings "true"/"false"). Returns undefined when absent so callers can
+// fall back to a default.
+function boolOpt(value: unknown): boolean | undefined {
+	if (typeof value === "boolean") return value;
+	if (typeof value === "string") {
+		if (/^(true|1|yes|sí|si)$/i.test(value)) return true;
+		if (/^(false|0|no)$/i.test(value)) return false;
+	}
+	return undefined;
+}
+
+// Build an AutoTrimConfig override from a free-form skill payload. Only keys the
+// caller actually provided are set; the rest fall back to DEFAULT_AUTO_TRIM_CONFIG.
+function resolveAutoTrimOverrides(
+	payload: Record<string, unknown>,
+): Partial<AutoTrimConfig> {
+	const overrides: Partial<AutoTrimConfig> = {};
+
+	const removeSilences = boolOpt(payload.removeSilences ?? payload.silences);
+	if (removeSilences !== undefined) overrides.removeSilences = removeSilences;
+	if (payload.silenceThresholdDb != null || payload.thresholdDb != null) {
+		overrides.silenceThresholdDb = num(
+			payload.silenceThresholdDb ?? payload.thresholdDb,
+			-40,
+		);
+	}
+	if (payload.minSilenceMs != null) {
+		overrides.minSilenceMs = num(payload.minSilenceMs, 700);
+	}
+	if (payload.keepAfterTrimMs != null) {
+		overrides.keepAfterTrimMs = num(payload.keepAfterTrimMs, 250);
+	}
+
+	const removeRepeated = boolOpt(
+		payload.removeRepeatedWords ?? payload.repeatedWords,
+	);
+	if (removeRepeated !== undefined)
+		overrides.removeRepeatedWords = removeRepeated;
+
+	const removeRestarts = boolOpt(
+		payload.removePhraseRestarts ?? payload.phraseRestarts,
+	);
+	if (removeRestarts !== undefined)
+		overrides.removePhraseRestarts = removeRestarts;
+
+	return overrides;
 }
 
 // Build a text-background patch from free-form payload keys, merged onto the
@@ -903,6 +954,30 @@ export async function executeSkillAction({
 				if (middle.length === 0) return fail("No se pudo aislar el segmento.");
 				editor.timeline.deleteElements({ elements: middle });
 				return ok("Segmento eliminado.");
+			}
+
+			case "auto_trim": {
+				// Detect and remove silences, repeated words and restarted phrases
+				// from a single clip. Fire-and-forget: the heavy work (audio
+				// extraction + on-device Whisper word timestamps + analysis) runs in
+				// the background; progress + completion surface via a toast.
+				const elementId = str(payload.clipId ?? payload.elementId);
+				const lang = normalizeLanguage(str(payload.language));
+				const { started, reason } = useSilenceTrimJobsStore
+					.getState()
+					.startAutoTrim({
+						elementId,
+						language:
+							lang && lang !== "auto"
+								? (lang as TranscriptionLanguage)
+								: "auto",
+						config: resolveAutoTrimOverrides(payload),
+					});
+				return started
+					? ok(
+							"Recortando silencios y repeticiones en segundo plano… te aviso cuando esté listo.",
+						)
+					: fail(reason ?? "No se pudo iniciar el auto-trim.");
 			}
 
 			case "set_transform": {

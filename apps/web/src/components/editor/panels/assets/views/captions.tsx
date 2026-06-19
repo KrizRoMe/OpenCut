@@ -16,6 +16,10 @@ import type {
 	TranscriptionLanguage,
 } from "@/lib/transcription/types";
 import { useTranscriptionJobsStore } from "@/stores/transcription-jobs-store";
+import { useSilenceTrimJobsStore } from "@/stores/silence-trim-jobs-store";
+import { DEFAULT_AUTO_TRIM_CONFIG } from "@/lib/silence";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import { insertCaptionChunksAsTextTrack } from "@/lib/subtitles/insert";
 import { parseSubtitleFile } from "@/lib/subtitles/parse";
 import { Spinner } from "@/components/ui/spinner";
@@ -95,6 +99,37 @@ export function Captions() {
 		job.status !== "done" &&
 		job.status !== "error" &&
 		job.status !== "cancelled";
+
+	// Auto-trim (silence + disfluency removal) state. Mirrors the
+	// transcription flow: a background job whose progress shows on the button.
+	const startAutoTrim = useSilenceTrimJobsStore((s) => s.startAutoTrim);
+	const autoTrimJob = useSilenceTrimJobsStore((s) => s.job);
+	const isAutoTrimming =
+		autoTrimJob != null &&
+		autoTrimJob.status !== "done" &&
+		autoTrimJob.status !== "error" &&
+		autoTrimJob.status !== "cancelled";
+
+	const [autoTrim, setAutoTrim] = useState({
+		removeSilences: DEFAULT_AUTO_TRIM_CONFIG.removeSilences,
+		silenceThresholdDb: DEFAULT_AUTO_TRIM_CONFIG.silenceThresholdDb,
+		minSilenceMs: DEFAULT_AUTO_TRIM_CONFIG.minSilenceMs,
+		removeRepeatedWords: DEFAULT_AUTO_TRIM_CONFIG.removeRepeatedWords,
+		removePhraseRestarts: DEFAULT_AUTO_TRIM_CONFIG.removePhraseRestarts,
+	});
+
+	const handleAutoTrim = () => {
+		startAutoTrim({
+			language: selectedLanguage,
+			config: {
+				removeSilences: autoTrim.removeSilences,
+				silenceThresholdDb: autoTrim.silenceThresholdDb,
+				minSilenceMs: autoTrim.minSilenceMs,
+				removeRepeatedWords: autoTrim.removeRepeatedWords,
+				removePhraseRestarts: autoTrim.removePhraseRestarts,
+			},
+		});
+	};
 
 	const activeDiagnostics = useEditor((e) =>
 		e.diagnostics.getActive({ scope: TRANSCRIPTION_DIAGNOSTICS_SCOPE }),
@@ -273,6 +308,100 @@ export function Captions() {
 							</Select>
 						</SectionField>
 					</SectionFields>
+
+					<div className="border-border/60 flex flex-col gap-3 rounded-md border p-3">
+						<div className="flex items-center justify-between">
+							<span className="text-sm font-medium">Auto-trim</span>
+							<span className="text-muted-foreground text-xs">
+								Quita silencios y repeticiones del clip seleccionado
+							</span>
+						</div>
+
+						<div className="flex items-center justify-between gap-2 text-sm">
+							Silencios
+							<Switch
+								checked={autoTrim.removeSilences}
+								onCheckedChange={(checked) =>
+									setAutoTrim((prev) => ({ ...prev, removeSilences: checked }))
+								}
+							/>
+						</div>
+
+						{autoTrim.removeSilences && (
+							<div className="flex flex-col gap-3 pl-1">
+								<div className="flex flex-col gap-1.5">
+									<span className="text-muted-foreground text-xs">
+										Umbral de silencio: {autoTrim.silenceThresholdDb} dB
+									</span>
+									<Slider
+										min={-60}
+										max={-20}
+										step={1}
+										value={[autoTrim.silenceThresholdDb]}
+										onValueChange={([value]) =>
+											setAutoTrim((prev) => ({
+												...prev,
+												silenceThresholdDb: value,
+											}))
+										}
+									/>
+								</div>
+								<div className="flex flex-col gap-1.5">
+									<span className="text-muted-foreground text-xs">
+										Silencio mínimo: {autoTrim.minSilenceMs} ms
+									</span>
+									<Slider
+										min={200}
+										max={2000}
+										step={50}
+										value={[autoTrim.minSilenceMs]}
+										onValueChange={([value]) =>
+											setAutoTrim((prev) => ({ ...prev, minSilenceMs: value }))
+										}
+									/>
+								</div>
+							</div>
+						)}
+
+						<div className="flex items-center justify-between gap-2 text-sm">
+							Palabras repetidas
+							<Switch
+								checked={autoTrim.removeRepeatedWords}
+								onCheckedChange={(checked) =>
+									setAutoTrim((prev) => ({
+										...prev,
+										removeRepeatedWords: checked,
+									}))
+								}
+							/>
+						</div>
+
+						<div className="flex items-center justify-between gap-2 text-sm">
+							Reinicios de frase
+							<Switch
+								checked={autoTrim.removePhraseRestarts}
+								onCheckedChange={(checked) =>
+									setAutoTrim((prev) => ({
+										...prev,
+										removePhraseRestarts: checked,
+									}))
+								}
+							/>
+						</div>
+
+						<Button
+							type="button"
+							variant="outline"
+							className="w-full"
+							onClick={handleAutoTrim}
+							disabled={isProcessing || isTranscribing || isAutoTrimming}
+						>
+							{isAutoTrimming && <Spinner className="mr-1" />}
+							{isAutoTrimming
+								? (autoTrimJob?.step ?? "Recortando…")
+								: "Limpiar clip"}
+						</Button>
+					</div>
 
 					<Button
 						type="button"

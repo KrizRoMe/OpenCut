@@ -21,6 +21,7 @@ export type SkillActionName =
 	| "add_clip"
 	| "duplicate_clip"
 	| "delete_segment"
+	| "auto_trim"
 	| "set_transform"
 	| "fade"
 	| "insert_as_continuation"

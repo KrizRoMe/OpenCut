@@ -22,11 +22,14 @@ class TranscriptionService {
 		audioData,
 		language = "auto",
 		modelId = DEFAULT_TRANSCRIPTION_MODEL,
+		wordTimestamps = false,
 		onProgress,
 	}: {
 		audioData: Float32Array;
 		language?: TranscriptionLanguage;
 		modelId?: TranscriptionModelId;
+		// When true, the result carries per-word timestamps (used by auto-trim).
+		wordTimestamps?: boolean;
 		onProgress?: ProgressCallback;
 	}): Promise<TranscriptionResult> {
 		await this.ensureWorker({ modelId, onProgress });
@@ -54,6 +57,7 @@ class TranscriptionService {
 						resolve({
 							text: response.text,
 							segments: response.segments,
+							words: response.words,
 							language,
 						});
 						break;
@@ -76,6 +80,7 @@ class TranscriptionService {
 				type: "transcribe",
 				audio: audioData,
 				language,
+				wordTimestamps,
 			} satisfies WorkerMessage);
 		});
 	}
@@ -155,6 +160,8 @@ class TranscriptionService {
 			this.worker.postMessage({
 				type: "init",
 				modelId: model.huggingFaceId,
+				revision: model.revision,
+				dtype: model.dtype,
 			} satisfies WorkerMessage);
 		});
 	}
